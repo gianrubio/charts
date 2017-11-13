@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "fullname" . }}
+data:
+  elasticsearchcluster-operator.yaml: |-
+      apiVersion: enterprises.upmc.com/v1
+      kind: ElasticsearchCluster
+      metadata:
+        name: "{{ template "fullname" . }}"
+      spec:
+        kibana:
+          image: "{{ .Values.kibana.image }}:{{ .Values.kibana.tag }}"
+        cerebro:
+          image: "{{ .Values.cerebro.image }}:{{ .Values.cerebro.tag }}"
+        client-node-replicas: "{{ .Values.operator.clientNodeReplicas }}"
+        master-node-replicas: "{{ .Values.operator.masterNodeReplicas }}"
+        data-node-replicas: "{{ .Values.operator.dataNodeReplicas }}"
+        network-host: "{{ .Values.operator.networkHost }}"
+        zones:
+          {{ toYaml .Values.zones | indent 12 }}
+        data-volume-size: "{{ .Values.operator.dataVolumeSize }}"
+        java-options: "{{ .Values.operator.javaOption }}"
+        snapshot:
+          {{ toYaml .Values.snapshot | indent 12 }}
+        storage:
+          {{ toYaml .Values.storage | indent 12 }}
+        resources:
+          {{ toYaml .Values.requests | indent 12 }} 

@@ -1,5 +1,5 @@
 global:
-  ## Hyperkube image to use when getting ThirdPartyResources & cleaning up
+  ## Hyperkube image to use when getting crd & cleaning up
   ##
   hyperkube:
     repository: quay.io/coreos/hyperkube
@@ -9,16 +9,43 @@ global:
 ## Elasticsearch-operator image
 ##
 image:
-  repository: quay.io/coreos/elasticsearch-operator
-  tag: v0.13.0
+  repository: upmc-enterprises/elasticsearch-operator
+  tag: v0.0.9
   pullPolicy: IfNotPresent
 
-## If enabled, elasticsearch-operator will create a service for scraping kubelets
-##
-kubeletService:
-  enable: true
-  namespace: kube-system
-  name: kubelet
+kibana:
+  image: upmcenterprises/kibana
+  tag: 5.3.1
+
+cerebro:
+  image: upmcenterprises/cerebro
+  tag: 0.6.8
+
+operator:
+  clientNodeReplicas: 1
+  masterNodeReplicas: 1
+  dataNodeReplicas: 1
+  networkHost: 0.0.0.0
+  zones:
+  - us-east-1c
+  - us-east-1d
+  - us-east-1e
+  dataVolumeSize: 10Gi
+  javaOptions: "-Xms256m -Xmx256m"
+  snapshot:
+    scheduler-enabled: false
+    bucket-name: elasticsnapshots99
+    cron-schedule: "@every 2m"
+  storage:
+    type: gp2
+    storage-class-provisioner: kubernetes.io/aws-ebs
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 1024Mi
+      cpu: '1'
 
 ## Node labels for elasticsearch-operator pod assignment
 ##
@@ -31,12 +58,4 @@ rbacEnable: true
 ## Elasticsearch-operator resource limits & requests
 ## Ref: https://kubernetes.io/docs/user-guide/compute-resources/
 ##
-resources: {}
-  # limits:
-  #   cpu: 200m
-  #   memory: 100Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 50Mi
 
-jobLabel: elasticsearch-operator
