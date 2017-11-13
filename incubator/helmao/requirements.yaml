@@ -1,0 +1,34 @@
+dependencies:
+- name: elasticsearch-operator
+  version: 0.0.6
+  repository: https://kubernetes-charts.storage.googleapis.com/
+- name: prometheus-operator
+  version: 0.0.6
+  repository: https://kubernetes-charts.storage.googleapis.com/
+- name: fluentd-elasticsearch
+- name: nginx-ingress
+  version: 0.8.11
+  repository: https://kubernetes-charts.storage.googleapis.com/
+- name: alertmanager
+- name: prometheus
+- name: kube-prometheus
+- name: kube2iam
+  version: 0.6.1
+  repository: https://kubernetes-charts.storage.googleapis.com/
+# Do we need this service?
+#- name: external-dns
+#- name: oauth2-proxy
+#- name: blackbox-exporter
+#- name: sentry
+- name: jaeger
+  version: 0.1.3
+  repository: https://kubernetes-charts.storage.googleapis.com/
+- name: gitlab-ce
+  version: 0.2.1
+  repository: https://kubernetes-charts.storage.googleapis.com/
+# TODO map to the chart server
+- name: cert-manager
+  version: 0.1.0
+  repository: https://github.com/jetstack/cert-manager/tree/master/contrib/charts/cert-manager
+
+
