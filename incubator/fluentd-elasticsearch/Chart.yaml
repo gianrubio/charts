@@ -1,0 +1,17 @@
+name: fluentd-elasticsearch
+version: 0.1.0
+appVersion: 0.1.0
+description: A Fluentd Elasticsearch Helm chart for Kubernetes.
+icon: https://raw.githubusercontent.com/fluent/fluentd-docs/master/public/logo/Fluentd_square.png
+keywords:
+- fluentd
+- elasticsearch
+- logging
+sources:
+- https://github.com/kubernetes/charts
+- https://github.com/fluent/fluentd-kubernetes-daemonset
+- https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch
+maintainers:
+- name: Giancarlo Rubio
+  email: gianrubio@gmail.com
+engine: gotpl
