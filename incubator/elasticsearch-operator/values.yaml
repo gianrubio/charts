@@ -1,0 +1,42 @@
+global:
+  ## Hyperkube image to use when getting ThirdPartyResources & cleaning up
+  ##
+  hyperkube:
+    repository: quay.io/coreos/hyperkube
+    tag: v1.7.6_coreos.0
+    pullPolicy: IfNotPresent
+
+## Elasticsearch-operator image
+##
+image:
+  repository: quay.io/coreos/elasticsearch-operator
+  tag: v0.13.0
+  pullPolicy: IfNotPresent
+
+## If enabled, elasticsearch-operator will create a service for scraping kubelets
+##
+kubeletService:
+  enable: true
+  namespace: kube-system
+  name: kubelet
+
+## Node labels for elasticsearch-operator pod assignment
+##
+nodeSelector: {}
+
+## If true, create & use RBAC resources
+##
+rbacEnable: true
+
+## Elasticsearch-operator resource limits & requests
+## Ref: https://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources: {}
+  # limits:
+  #   cpu: 200m
+  #   memory: 100Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 50Mi
+
+jobLabel: elasticsearch-operator
