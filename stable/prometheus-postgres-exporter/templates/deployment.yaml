@@ -24,6 +24,8 @@ spec:
       serviceAccountName: {{ template "prometheus-postgres-exporter.serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}
+          args:
+            - -extend.query-path=/config
           env:          
             - name: DATA_SOURCE_NAME
               valueFrom:
@@ -48,7 +50,7 @@ spec:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
             - name: queries
-              mountPath: /etc
+              mountPath: /config
      {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
