@@ -18,5 +18,5 @@ spec:
   {{- end }}
   selector:
     app: {{ template "fluentd-elasticsearch.fullname" . }}
-    release: {{ .Release.Name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 {{- end }}
