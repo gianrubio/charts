@@ -54,11 +54,12 @@ The following tables lists the configurable parameters of the prometheus-operato
 | `prometheusConfigReloader.repository` | prometheus-config-reloader image                                                                                            | `quay.io/coreos/prometheus-config-reloader` |
 | `prometheusConfigReloader.tag`        | prometheus-config-reloader tag                                                                                              | `v0.0.4`                                    |
 | `rbac.create`                         | If true, create & use RBAC resources                                                                                        | `true`                                      |
-| `rbac.pspEnabled`                     | Specifies whether a PodSecurityPolicy should be created.                                                                    | `true`                                      |
+| `rbac.pspEnable`                      | Specifies whether a PodSecurityPolicy should be created.                                                                    | `true`                                      |
 | `resources`                           | Pod resource requests & limits                                                                                              | `{}`                                        |
 | `serviceAccount.name`                 | Service account to be used. If not set and serviceAccount.create is `true`, a name is generated using the fullname template |                                          |
 | `serviceAccount.create`               | If true, create a new service account                                                                                       | `true`                                      |
 | `tolerations`                         | List of node taints to tolerate                                                                                             | `[]`                                        |
+| `createCustomResource`                | If true, will create CRDs used by prometheus-operator without relying on the container to come up and create them          | `true`
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,

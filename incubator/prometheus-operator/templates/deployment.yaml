@@ -19,9 +19,10 @@ spec:
           {{- if .Values.kubeletService.enable }}
             - --kubelet-service={{ .Values.kubeletService.namespace }}/{{ .Values.kubeletService.name }}
           {{- end }}
-            - -logtostderr=true
+            - --logtostderr=true
             - --prometheus-config-reloader={{ .Values.prometheusConfigReloader.repository }}:{{ .Values.prometheusConfigReloader.tag }}
             - --config-reloader-image={{ .Values.configmapReload.repository }}:{{ .Values.configmapReload.tag }}
+            - --manage-crds={{ .Values.createCustomResource | not }}
           ports:
             - containerPort: 8080
               name: http

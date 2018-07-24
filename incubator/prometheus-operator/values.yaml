@@ -6,7 +6,7 @@
 ##
 prometheusConfigReloader:
   repository: quay.io/coreos/prometheus-config-reloader
-  tag: v0.22.0
+  tag: v0.23.0
 
 ## Configmap-reload image to use for reloading configmaps
 ##
@@ -18,8 +18,14 @@ configmapReload:
 ##
 image:
   repository: quay.io/coreos/prometheus-operator
-  tag: v0.22.0
+  tag: v0.23.0
   pullPolicy: IfNotPresent
+
+
+## If true, createCustomResource will create CRDs used by prometheus-operator without
+## relying on the container to come up and create them
+##
+createCustomResource: false
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created
@@ -35,6 +41,8 @@ rbac:
 
 kubeletService:
   enable: true
+  namespace: kube-system
+  name: kubelet
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -43,10 +51,10 @@ resources: {}
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
   #  cpu: 200m
-  #  memory: 100Mi
+  #  memory: 200Mi
   # requests:
   #  cpu: 100m
-  #  memory: 50Mi
+  #  memory: 100Mi
 
 nodeSelector: {}
 
