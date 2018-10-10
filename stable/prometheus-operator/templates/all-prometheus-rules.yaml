@@ -1,10 +1,15 @@
-{{- if .Values.rules.create }}
+{{- if and .Values.rules.create }}
+{{- $operatorJob := printf "%s-%s" (include "prometheus-operator.fullname" .) "operator" }}
+{{- $prometheusJob := printf "%s-%s" (include "prometheus-operator.fullname" .) "prometheus" }}
+{{- $alertmanagerJob := printf "%s-%s" (include "prometheus-operator.fullname" .) "alertmanager" }}
+
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  labels:
-{{ toYaml .Values.rules.labels | indent 4 }}
-  name: {{ template "prometheus.fullname" . }}-extra-rules
+  name: {{ template "prometheus-operator.fullname" . }}
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   groups:
   - name: k8s.rules
@@ -483,7 +488,7 @@ spec:
         message: Alertmanager has disappeared from Prometheus target discovery.
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-alertmanagerdown
       expr: |
-        absent(up{job="alertmanager-main"} == 1)
+        absent(up{job="{{ $alertmanagerJob }}"} == 1)
       for: 15m
       labels:
         severity: critical
@@ -546,7 +551,7 @@ spec:
         message: Prometheus has disappeared from Prometheus target discovery.
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-prometheusdown
       expr: |
-        absent(up{job="prometheus-k8s"} == 1)
+        absent(up{job="{{ $prometheusJob }}"} == 1)
       for: 15m
       labels:
         severity: critical
@@ -555,7 +560,7 @@ spec:
         message: PrometheusOperator has disappeared from Prometheus target discovery.
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-prometheusoperatordown
       expr: |
-        absent(up{job="prometheus-operator"} == 1)
+        absent(up{job="{{ $operatorJob }}"} == 1)
       for: 15m
       labels:
         severity: critical
@@ -929,7 +934,7 @@ spec:
         message: The configuration of the instances of the Alertmanager cluster `{{`{{$labels.service}}`}}`
           are out of sync.
       expr: |
-        count_values("config_hash", alertmanager_config_hash{job="alertmanager-main"}) BY (service) / ON(service) GROUP_LEFT() label_replace(prometheus_operator_alertmanager_spec_replicas{job="prometheus-operator"}, "service", "alertmanager-$1", "alertmanager", "(.*)") != 1
+        count_values("config_hash", alertmanager_config_hash{job="{{ $alertmanagerJob }}"}) BY (service) / ON(service) GROUP_LEFT() label_replace(prometheus_operator_alertmanager_spec_replicas{job="{{ $operatorJob }}"}, "service", "alertmanager-$1", "alertmanager", "(.*)") != 1
       for: 5m
       labels:
         severity: critical
@@ -938,7 +943,7 @@ spec:
         message: Reloading Alertmanager's configuration has failed for {{`{{ $labels.namespace
           }}`}}/{{`{{ $labels.pod}}`}}.
       expr: |
-        alertmanager_config_last_reload_successful{job="alertmanager-main"} == 0
+        alertmanager_config_last_reload_successful{job="{{ $alertmanagerJob }}"} == 0
       for: 10m
       labels:
         severity: warning
@@ -985,7 +990,7 @@ spec:
         description: Reloading Prometheus' configuration has failed for {{`{{$labels.namespace}}`}}/{{`{{$labels.pod}}`}}
         summary: Reloading Promehteus' configuration failed
       expr: |
-        prometheus_config_last_reload_successful{job="prometheus-k8s"} == 0
+        prometheus_config_last_reload_successful{job="{{ $prometheusJob }}"} == 0
       for: 10m
       labels:
         severity: warning
@@ -995,7 +1000,7 @@ spec:
           $labels.pod}}`}}
         summary: Prometheus' alert notification queue is running full
       expr: |
-        predict_linear(prometheus_notifications_queue_length{job="prometheus-k8s"}[5m], 60 * 30) > prometheus_notifications_queue_capacity{job="prometheus-k8s"}
+        predict_linear(prometheus_notifications_queue_length{job="{{ $prometheusJob }}"}[5m], 60 * 30) > prometheus_notifications_queue_capacity{job="{{ $prometheusJob }}"}
       for: 10m
       labels:
         severity: warning
@@ -1005,7 +1010,7 @@ spec:
           $labels.pod}}`}} to Alertmanager {{`{{$labels.Alertmanager}}`}}
         summary: Errors while sending alert from Prometheus
       expr: |
-        rate(prometheus_notifications_errors_total{job="prometheus-k8s"}[5m]) / rate(prometheus_notifications_sent_total{job="prometheus-k8s"}[5m]) > 0.01
+        rate(prometheus_notifications_errors_total{job="{{ $prometheusJob }}"}[5m]) / rate(prometheus_notifications_sent_total{job="{{ $prometheusJob }}"}[5m]) > 0.01
       for: 10m
       labels:
         severity: warning
@@ -1015,7 +1020,7 @@ spec:
           $labels.pod}}`}} to Alertmanager {{`{{$labels.Alertmanager}}`}}
         summary: Errors while sending alerts from Prometheus
       expr: |
-        rate(prometheus_notifications_errors_total{job="prometheus-k8s"}[5m]) / rate(prometheus_notifications_sent_total{job="prometheus-k8s"}[5m]) > 0.03
+        rate(prometheus_notifications_errors_total{job="{{ $prometheusJob }}"}[5m]) / rate(prometheus_notifications_sent_total{job="{{ $prometheusJob }}"}[5m]) > 0.03
       for: 10m
       labels:
         severity: critical
@@ -1025,7 +1030,7 @@ spec:
           to any Alertmanagers
         summary: Prometheus is not connected to any Alertmanagers
       expr: |
-        prometheus_notifications_alertmanagers_discovered{job="prometheus-k8s"} < 1
+        prometheus_notifications_alertmanagers_discovered{job="{{ $prometheusJob }}"} < 1
       for: 10m
       labels:
         severity: warning
@@ -1035,7 +1040,7 @@ spec:
           reload failures over the last four hours.'
         summary: Prometheus has issues reloading data blocks from disk
       expr: |
-        increase(prometheus_tsdb_reloads_failures_total{job="prometheus-k8s"}[2h]) > 0
+        increase(prometheus_tsdb_reloads_failures_total{job="{{ $prometheusJob }}"}[2h]) > 0
       for: 12h
       labels:
         severity: warning
@@ -1045,7 +1050,7 @@ spec:
           compaction failures over the last four hours.'
         summary: Prometheus has issues compacting sample blocks
       expr: |
-        increase(prometheus_tsdb_compactions_failed_total{job="prometheus-k8s"}[2h]) > 0
+        increase(prometheus_tsdb_compactions_failed_total{job="{{ $prometheusJob }}"}[2h]) > 0
       for: 12h
       labels:
         severity: warning
@@ -1055,7 +1060,7 @@ spec:
           log (WAL).'
         summary: Prometheus write-ahead log is corrupted
       expr: |
-        tsdb_wal_corruptions_total{job="prometheus-k8s"} > 0
+        tsdb_wal_corruptions_total{job="{{ $prometheusJob }}"} > 0
       for: 4h
       labels:
         severity: warning
@@ -1065,7 +1070,7 @@ spec:
           samples.
         summary: Prometheus isn't ingesting samples
       expr: |
-        rate(prometheus_tsdb_head_samples_appended_total{job="prometheus-k8s"}[5m]) <= 0
+        rate(prometheus_tsdb_head_samples_appended_total{job="{{ $prometheusJob }}"}[5m]) <= 0
       for: 10m
       labels:
         severity: warning
@@ -1075,7 +1080,7 @@ spec:
           due to duplicate timestamps but different values'
         summary: Prometheus has many samples rejected
       expr: |
-        increase(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="prometheus-k8s"}[5m]) > 0
+        increase(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="{{ $prometheusJob }}"}[5m]) > 0
       for: 10m
       labels:
         severity: warning
@@ -1086,7 +1091,7 @@ spec:
         message: Errors while reconciling Alertmanager in {{`{{ $labels.namespace }}`}}
           Namespace.
       expr: |
-        rate(prometheus_operator_alertmanager_reconcile_errors_total{job="prometheus-operator"}[5m]) > 0.1
+        rate(prometheus_operator_reconcile_errors_total{job="{{ $operatorJob }}",controller="alertmanager"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
@@ -1094,7 +1099,7 @@ spec:
       annotations:
         message: Errors while reconciling Prometheus in {{`{{ $labels.namespace }}`}} Namespace.
       expr: |
-        rate(prometheus_operator_prometheus_reconcile_errors_total{job="prometheus-operator"}[5m]) > 0.1
+        rate(prometheus_operator_reconcile_errors_total{job="{{ $operatorJob }}",controller="prometheus"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
@@ -1102,8 +1107,98 @@ spec:
       annotations:
         message: Errors while reconciling Prometheus in {{`{{ $labels.namespace }}`}} Namespace.
       expr: |
-        rate(prometheus_operator_node_address_lookup_errors_total{job="prometheus-operator"}[5m]) > 0.1
+        rate(prometheus_operator_node_address_lookup_errors_total{job="{{ $operatorJob }}",controller="prometheus"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
+  - name: etcd_alert.rules
+    rules:
+    - alert: InsufficientMembers
+      expr: count(up{job="kube-etcd"} == 0) > (count(up{job="kube-etcd"}) / 2 - 1)
+      for: 3m
+      labels:
+        severity: critical
+      annotations:
+        description: If one more etcd member goes down the cluster will be unavailable
+        summary: etcd cluster insufficient members
+    - alert: HighNumberOfFailedHTTPRequests
+      expr: sum(rate(etcd_http_failed_total{code!~"^(?:4[0-9]{2})$",job="kube-etcd"}[5m]))
+        BY (method) / sum(rate(etcd_http_received_total{job="kube-etcd"}[5m])) BY (method)
+        > 0.01
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        description: '{{ `{{$value }} `}}% of requests for {{ `{{$labels.method }} `}} failed on etcd
+          instance {{ `{{$labels.instance }} `}}'
+        summary: a high number of HTTP requests are failing
+    - alert: HighNumberOfFailedHTTPRequests
+      expr: sum(rate(etcd_http_failed_total{code!~"^(?:4[0-9]{2})$",job="kube-etcd"}[5m]))
+        BY (method) / sum(rate(etcd_http_received_total{job="kube-etcd"}[5m])) BY (method)
+        > 0.05
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        description: '{{ `{{$value }} `}}% of requests for {{ `{{$labels.method }} `}} failed on etcd
+          instance {{ `{{$labels.instance }} `}}'
+        summary: a high number of HTTP requests are failing
+    - alert: HighNumberOfFailedHTTPRequests
+      expr: sum(rate(etcd_http_failed_total{code=~"^(?:4[0-9]{2})$",job="kube-etcd"}[5m]))
+        BY (method) / sum(rate(etcd_http_received_total{job="kube-etcd"}[5m])) BY (method)
+        > 0.5
+      for: 10m
+      labels:
+        severity: critical
+      annotations:
+        description: '{{ `{{$value }} `}}% of requests for {{ `{{$labels.method }} `}} failed with
+          4xx responses on etcd instance {{ `{{$labels.instance }} `}}'
+        summary: a high number of HTTP requests are failing
+    - alert: HTTPRequestsSlow
+      expr: histogram_quantile(0.99, rate(etcd_http_successful_duration_second_bucket[5m]))
+        > 0.15
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        description: on etcd instance {{ `{{$labels.instance }} `}} HTTP requests to {{ `{{$labels.method
+          }} `}} are slow
+        summary: slow HTTP requests
+    - record: instance:fd_utilization
+      expr: process_open_fds / process_max_fds
+    - alert: FdExhaustionClose
+      expr: predict_linear(instance:fd_utilization[1h], 3600 * 4) > 1
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        description: '{{ `{{$labels.job }} `}} instance {{ `{{$labels.instance }} `}} will exhaust
+          its file descriptors soon'
+        summary: file descriptors soon exhausted
+    - alert: FdExhaustionClose
+      expr: predict_linear(instance:fd_utilization[10m], 3600) > 1
+      for: 10m
+      labels:
+        severity: critical
+      annotations:
+        description: '{{ `{{$labels.job }} `}} instance {{ `{{$labels.instance }} `}} will exhaust
+          its file descriptors soon'
+        summary: file descriptors soon exhausted
+    - alert: HighNumberOfFailedProposals
+      expr: increase(etcd_server_proposal_failed_total{job="kube-etcd"}[1h]) > 5
+      labels:
+        severity: warning
+      annotations:
+        description: etcd instance {{ `{{$labels.instance }} `}} has seen {{ `{{$value }} `}} proposal
+          failures within the last hour
+        summary: a high number of proposals within the etcd cluster are failing
+    - alert: HighFsyncDurations
+      expr: histogram_quantile(0.99, rate(etcd_wal_fsync_durations_seconds_bucket[5m]))
+        > 0.5
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        description: etcd instance {{ `{{$labels.instance }} `}} fync durations are high
+        summary: high fsync durations
 {{- end }}

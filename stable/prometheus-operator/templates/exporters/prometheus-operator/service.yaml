@@ -1,9 +1,11 @@
+{{- if .Values.prometheusOperator.deploy }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-operator
-  labels:
-    k8s-app: prometheus-operator
+  name: {{ template "prometheus-operator.fullname" . }}-operator
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-operator
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   clusterIP: None
   ports:
@@ -11,4 +13,7 @@ spec:
     port: 8080
     targetPort: http
   selector:
-    k8s-app: prometheus-operator
+    app: {{ template "prometheus-operator.name" . }}-operator
+    release: {{ .Release.Name | quote }}
+
+{{- end }}

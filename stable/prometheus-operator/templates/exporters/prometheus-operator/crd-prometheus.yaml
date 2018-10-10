@@ -1,18 +1,31 @@
-{{- if .Values.createCustomResource -}}
+{{- if and .Values.prometheusOperator.deploy .Values.prometheusOperator.createCustomResource -}}
 # Source https://github.com/coreos/prometheus-operator/blob/master/contrib/kube-prometheus/manifests/0prometheus-operator-0prometheusCustomResourceDefinition.yaml
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
   name: prometheuses.monitoring.coreos.com
+  labels:
+    app: {{ template "prometheus-operator.name" . }}-operator
+{{ include "prometheus-operator.labels" . | indent 4 }}
   annotations:
     "helm.sh/hook": crd-install
     "helm.sh/hook-delete-policy": "before-hook-creation"
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .metadata.creationTimestamp
+    description: |-
+      CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.
+
+      Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+    name: Age
+    type: date
   group: monitoring.coreos.com
   names:
     kind: Prometheus
+    listKind: PrometheusList
     plural: prometheuses
+    singular: prometheus
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -28,8 +41,8 @@ spec:
             submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
           type: string
         spec:
-          description: 'Specification of the desired behavior of the Prometheus cluster.
-            More info: https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#spec-and-status'
+          description: 'PrometheusSpec is a specification of the desired behavior
+            of the Prometheus cluster. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#spec-and-status'
           properties:
             additionalAlertManagerConfigs:
               description: SecretKeySelector selects a key of a Secret.
@@ -676,6 +689,76 @@ spec:
                   type: array
               required:
               - alertmanagers
+            apiserverConfig:
+              description: 'APIServerConfig defines a host and auth methods to access
+                apiserver. More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config'
+              properties:
+                basicAuth:
+                  description: 'BasicAuth allow an endpoint to authenticate over basic
+                    authentication More info: https://prometheus.io/docs/operating/configuration/#endpoints'
+                  properties:
+                    password:
+                      description: SecretKeySelector selects a key of a Secret.
+                      properties:
+                        key:
+                          description: The key of the secret to select from.  Must
+                            be a valid secret key.
+                          type: string
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                          type: string
+                        optional:
+                          description: Specify whether the Secret or it's key must
+                            be defined
+                          type: boolean
+                      required:
+                      - key
+                    username:
+                      description: SecretKeySelector selects a key of a Secret.
+                      properties:
+                        key:
+                          description: The key of the secret to select from.  Must
+                            be a valid secret key.
+                          type: string
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                          type: string
+                        optional:
+                          description: Specify whether the Secret or it's key must
+                            be defined
+                          type: boolean
+                      required:
+                      - key
+                bearerToken:
+                  description: Bearer token for accessing apiserver.
+                  type: string
+                bearerTokenFile:
+                  description: File to read bearer token for accessing apiserver.
+                  type: string
+                host:
+                  description: Host of apiserver. A valid string consisting of a hostname
+                    or IP followed by an optional port number
+                  type: string
+                tlsConfig:
+                  description: TLSConfig specifies TLS configuration parameters.
+                  properties:
+                    caFile:
+                      description: The CA cert to use for the targets.
+                      type: string
+                    certFile:
+                      description: The client cert file for the targets.
+                      type: string
+                    insecureSkipVerify:
+                      description: Disable target certificate validation.
+                      type: boolean
+                    keyFile:
+                      description: The client key file for the targets.
+                      type: string
+                    serverName:
+                      description: Used to verify the hostname for the targets.
+                      type: string
+              required:
+              - host
             baseImage:
               description: Base image to use for a Prometheus deployment.
               type: string
@@ -1765,6 +1848,9 @@ spec:
 
                     Populated by the system. Read-only. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
                   type: string
+            priorityClassName:
+              description: Priority class assigned to the Pods
+              type: string
             remoteRead:
               description: If specified, the remote_read spec. This is an experimental
                 feature, it may change in any upcoming release in a breaking way.
@@ -2029,7 +2115,9 @@ spec:
                     value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
                   type: object
             retention:
-              description: Time duration Prometheus shall retain data for.
+              description: Time duration Prometheus shall retain data for. Default
+                is '24h', and must match the regular expression `[0-9]+(ms|s|m|h|d|w|y)`
+                (milliseconds seconds minutes hours days weeks years).
               type: string
             routePrefix:
               description: The route prefix Prometheus registers HTTP handlers for.
@@ -2308,14 +2396,22 @@ spec:
                     "In", and the values array contains only "value". The requirements
                     are ANDed.
                   type: object
+            sha:
+              description: SHA of Prometheus container image to be deployed. Defaults
+                to the value of `version`. Similar to a tag, but the SHA explicitly
+                deploys an immutable container image. Version and Tag are ignored
+                if SHA is set.
+              type: string
             storage:
               description: StorageSpec defines the configured storage for a group
-                Prometheus servers.
+                Prometheus servers. If neither `emptyDir` nor `volumeClaimTemplate`
+                is specified, then by default an [EmptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)
+                will be used.
               properties:
                 class:
                   description: 'Name of the StorageClass to use when requesting storage
                     provisioning. More info: https://kubernetes.io/docs/user-guide/persistent-volumes/#storageclasses
-                    DEPRECATED'
+                    (DEPRECATED - instead use `volumeClaimTemplate.spec.storageClassName`)'
                   type: string
                 emptyDir:
                   description: Represents an empty directory for a pod. Empty directory
@@ -2846,7 +2942,7 @@ spec:
                           type: string
             tag:
               description: Tag of Prometheus container image to be deployed. Defaults
-                to the value of `version`.
+                to the value of `version`. Version is ignored if Tag is set.
               type: string
             thanos:
               description: ThanosSpec defines parameters for a Prometheus server within
@@ -2863,11 +2959,41 @@ spec:
                       description: Google Cloud Storage bucket name for stored blocks.
                         If empty it won't store any block inside Google Cloud Storage.
                       type: string
+                    credentials:
+                      description: SecretKeySelector selects a key of a Secret.
+                      properties:
+                        key:
+                          description: The key of the secret to select from.  Must
+                            be a valid secret key.
+                          type: string
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                          type: string
+                        optional:
+                          description: Specify whether the Secret or it's key must
+                            be defined
+                          type: boolean
+                      required:
+                      - key
                 peers:
                   description: Peers is a DNS name for Thanos to discover peers through.
                   type: string
+                resources:
+                  description: ResourceRequirements describes the compute resource
+                    requirements.
+                  properties:
+                    limits:
+                      description: 'Limits describes the maximum amount of compute
+                        resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                      type: object
+                    requests:
+                      description: 'Requests describes the minimum amount of compute
+                        resources required. If Requests is omitted for a container,
+                        it defaults to Limits if that is explicitly specified, otherwise
+                        to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                      type: object
                 s3:
-                  description: ThanosSpec defines parameters for of AWS Simple Storage
+                  description: ThanosS3Spec defines parameters for of AWS Simple Storage
                     Service (S3) with Thanos. (S3 compatible services apply as well)
                   properties:
                     accessKey:
@@ -2889,6 +3015,9 @@ spec:
                     bucket:
                       description: S3-Compatible API bucket name for stored blocks.
                       type: string
+                    encryptsse:
+                      description: Whether to use Server Side Encryption
+                      type: boolean
                     endpoint:
                       description: S3-Compatible API endpoint for stored blocks.
                       type: string
@@ -2916,9 +3045,16 @@ spec:
                       description: Whether to use S3 Signature Version 2; otherwise
                         Signature Version 4 will be used.
                       type: boolean
+                sha:
+                  description: SHA of Thanos container image to be deployed. Defaults
+                    to the value of `version`. Similar to a tag, but the SHA explicitly
+                    deploys an immutable container image. Version and Tag are ignored
+                    if SHA is set.
+                  type: string
                 tag:
                   description: Tag of Thanos sidecar container image to be deployed.
-                    Defaults to the value of `version`.
+                    Defaults to the value of `version`. Version is ignored if Tag
+                    is set.
                   type: string
                 version:
                   description: Version describes the version of Thanos to use.
@@ -2966,9 +3102,9 @@ spec:
               description: Version of Prometheus to be deployed.
               type: string
         status:
-          description: 'Most recent observed status of the Prometheus cluster. Read-only.
-            Not included when requesting from the apiserver, only from the Prometheus
-            Operator API itself. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#spec-and-status'
+          description: 'PrometheusStatus is the most recent observed status of the
+            Prometheus cluster. Read-only. Not included when requesting from the apiserver,
+            only from the Prometheus Operator API itself. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#spec-and-status'
           properties:
             availableReplicas:
               description: Total number of available pods (ready for at least minReadySeconds)
