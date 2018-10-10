@@ -1,3 +1,4 @@
+{{- if .Values.alertmanager.deploy }}
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
@@ -47,4 +48,5 @@ spec:
             matchLabels:
               app: {{ template "alertmanager.name" . }}
               alertmanager: {{ .Release.Name }}
+{{- end }}
 {{- end }}

@@ -1,4 +1,4 @@
-{{- if .Values.alertmanager.ingress.enable }}
+{{- if and .Values.alertmanager.deploy .Values.alertmanager.ingress.enable }}
 {{- $routePrefix := .Values.routePrefix }}
 {{- $serviceName := include "alertmanager.fullname" . }}
 apiVersion: extensions/v1beta1

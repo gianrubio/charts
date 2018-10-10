@@ -19,7 +19,7 @@ spec:
         paths:
           - path: "{{ $routePrefix }}"
             backend:
-              serviceName: "prometheus-k8s" #"{{ $serviceName }}"
+              serviceName: "{{ $serviceName }}"
               servicePort: 9090
     {{- end }}
 {{- if .Values.prometheus.ingress.tls }}

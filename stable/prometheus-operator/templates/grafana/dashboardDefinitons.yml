@@ -1,3 +1,4 @@
+{{- if .Values.grafana.deploy }}
 apiVersion: v1
 items:
 - apiVersion: v1
@@ -7337,3 +7338,4 @@ items:
   metadata:
     name: grafana-dashboard-statefulset
 kind: ConfigMapList
+{{- end }}

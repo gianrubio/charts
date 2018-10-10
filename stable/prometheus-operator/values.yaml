@@ -139,6 +139,7 @@ serviceMonitors: []
 ####################
 
 alertmanager:
+  deploy: true
   ## Alertmanager configuration directives
   ## Ref: https://prometheus.io/docs/alerting/configuration/
   ##
@@ -365,7 +366,7 @@ grafana:
         type: file
         editable: true
         options:
-          path: /var/lib/grafana/dashboards/rafana-dashboard-k8s-node-rsrc-use
+          path: /var/lib/grafana/dashboards/grafana-dashboard-k8s-node-rsrc-use
       - name: grafana-dashboard-k8s-resources-cluster
         orgId: 1
         type: file
@@ -530,6 +531,7 @@ nodeexporter:
         k8s-app: node-exporter
 
 prometheusOperator:
+  deploy: true
   labels:
     k8s-app: prometheus-operator
 
@@ -620,7 +622,7 @@ prometheus:
     ##
     externalLabels: {}
 
-    ## External URL at which Prometheus will be reachable
+    ## External URL at which Prometheus will be reachable.
     ##
     externalUrl: ""
 
@@ -629,13 +631,23 @@ prometheus:
         prometheus: k8s
         role: alert-rules
 
-    serviceMonitorSelector:
-      matchLabels:
-        prometheus: bla
+    ## serviceMonitorSelector will limit which servicemonitors are used to create scrape
+    ## configs in Prometheus. By default all are loaded
+    ##
+    serviceMonitorSelector: {}
+    
+    # serviceMonitorSelector: {}
+    #   matchLabels:
+    #     prometheus: somelabel
+    
+    ## serviceMonitorNamespaceSelector will limit namespaces from which serviceMonitors are used to create scrape
+    ## configs in Prometheus. By default all namespaces will be used
+    ##
+    serviceMonitorNamespaceSelector: {}
 
     ## How long to retain metrics
     ##
-    retention: 240h
+    retention: 10d
 
     ## If true, the Operator won't process any Prometheus configuration changes
     ##

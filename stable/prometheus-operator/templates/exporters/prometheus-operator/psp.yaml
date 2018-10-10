@@ -1,4 +1,4 @@
-{{- if and .Values.global.rbac.create .Values.global.rbac.pspEnable }}
+{{- if and .Values.prometheusOperator.deploy .Values.global.rbac.create .Values.global.rbac.pspEnable }}
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:

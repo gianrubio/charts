@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
 {{ toYaml .Values.prometheus.labels | indent 4 }}
-  name: prometheus-k8s #{{ include "prometheus.fullname" . }}
+  name: {{ include "prometheus.fullname" . }}
 spec:
   ports:
   - name: web

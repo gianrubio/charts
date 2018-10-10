@@ -1,3 +1,4 @@
+# {{- if and .Values.prometheusOperator.deploy .Values.createCustomResource }}
 # apiVersion: batch/v1
 # kind: Job
 # metadata:
@@ -33,4 +34,7 @@
 #               kubectl delete crd prometheuses.monitoring.coreos.com;
 #               kubectl delete crd prometheusrules.monitoring.coreos.com;
 #               kubectl delete crd servicemonitors.monitoring.coreos.com;
+#               # kubectl delete service prometheus-operated;
+#               # kubectl delete service alertmanager-operated;
 #       restartPolicy: OnFailure
+# {{- end }}

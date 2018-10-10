@@ -74,14 +74,6 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 {{- end }}
 
-{{- define "prometheus.serviceAccountName" -}}
-{{- if .Values.prometheus.serviceAccount.create -}}
-    {{ default "prometheus" .Values.prometheus.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.prometheus.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
 {{- define "prometheus.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
@@ -90,6 +82,14 @@ release: {{ .Release.Name | quote }}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end }}
 {{- end }}
+
+{{- define "prometheus.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+    {{ default (include "prometheus.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}s
+{{- end -}}
 
 {{- define "kube-apiserver.fullname" -}}
 {{- if .Values.fullnameOverride -}}
