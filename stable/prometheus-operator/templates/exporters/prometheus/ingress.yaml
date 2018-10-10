@@ -1,5 +1,6 @@
-{{- if .Values.prometheus.ingress.enabled }}
+{{- if .Values.prometheus.ingress.enable }}
 {{- $routePrefix := .Values.prometheus.routePrefix }}
+{{- $serviceName := include "prometheus.fullname" . }}	
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -9,7 +10,7 @@ metadata:
 {{- end }}
   labels:
 {{ toYaml .Values.prometheus.labels | indent 4 }}
-  name: {{ template "prometheus.fullname" . }}
+  name: {{ $serviceName }}
 spec:
   rules:
     {{- range $host := .Values.prometheus.ingress.hosts }}
@@ -18,7 +19,7 @@ spec:
         paths:
           - path: "{{ $routePrefix }}"
             backend:
-              serviceName: "prometheus-k8s"
+              serviceName: "prometheus-k8s" #"{{ $serviceName }}"
               servicePort: 9090
     {{- end }}
 {{- if .Values.prometheus.ingress.tls }}

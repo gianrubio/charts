@@ -7,7 +7,7 @@ metadata:
 {{ toYaml .Values.coreDns.labels | indent 4}}
   name: coredns
 spec:
-  jobLabel: k8s-app
+  jobLabel: {{ .Values.coreDns.serviceMonitor.jobLabel }}
   selector:
 {{ toYaml .Values.coreDns.serviceMonitor.selector | indent 6 }}
   namespaceSelector:
@@ -17,5 +17,4 @@ spec:
   - port: http-metrics
     interval: 15s
     bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
- 
 {{- end }}

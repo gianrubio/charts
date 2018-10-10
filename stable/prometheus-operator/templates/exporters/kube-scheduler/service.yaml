@@ -15,5 +15,5 @@ spec:
       targetPort: {{ .Values.kubeScheduler.service.targetPort}}
   type: ClusterIP
   selector:
-    {{ toYaml .Values.kubeScheduler.service.selector | indent 4 }}
+{{ toYaml .Values.kubeScheduler.service.selector | indent 4 }}
 {{- end -}}

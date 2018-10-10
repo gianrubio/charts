@@ -166,7 +166,7 @@ alertmanager:
   ##
   image:
     repository: quay.io/prometheus/alertmanager
-    tag: v0.15.0
+    tag: v0.15.2
 
   ingress:
     ## If true, Alertmanager Ingress will be created
@@ -279,10 +279,9 @@ coreDns:
   ##
   serviceMonitor:
     selfMonitor: true
-    jobLabel: coredns
+    jobLabel: k8s-app
     selector:
       matchLabels:
-        component: metrics
         k8s-app: coredns
 
   labels:
@@ -295,7 +294,6 @@ coreDns:
 
     # The k8s-app label coredns service is deployed with
     selector:
-      component: metrics
       k8s-app: coredns
 
 # Using default values from https://github.com/helm/charts/blob/master/stable/grafana/values.yaml
@@ -404,18 +402,17 @@ kubeApiServer:
   labels:
     k8s-app: kube-apiserver
 
+  tlsConfig:
+    serverName: kubernetes
+    insecureSkipVerify: false
+    
   serviceMonitor:
-    jobLabel: kube-apiserver
+    jobLabel: component
     selfMonitor: true
     selector:
       matchLabels:
         component: apiserver
         provider: kubernetes
-
-  service:
-    selector:
-      component: apiserver
-      provider: kubernetes
 
 kubelet:
   enabled: true
@@ -426,7 +423,7 @@ kubelet:
     k8s-app: kubelet
 
   serviceMonitor:
-    jobLabel: kubelet
+    jobLabel: k8s-app
     selfMonitor: true
     selector:
       matchLabels:
@@ -459,7 +456,6 @@ kubeControllerManager:
 
 
 kubeDns:
-
   serviceMonitor:
     jobLabel: k8s-app
     selfMonitor: true
@@ -609,7 +605,7 @@ prometheus:
   prometheusSpec:
 
     baseImage: quay.io/prometheus/prometheus
-    version: v2.4.2
+    version: v2.4.3
 
     ## Alertmanagers to which alerts will be sent
     ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#alertmanagerendpoints
@@ -697,3 +693,6 @@ prometheus:
     #        requests:
     #          storage: 50Gi
     #    selector: {}
+  
+  rbac:
+    grantAllResources: false

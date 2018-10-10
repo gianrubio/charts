@@ -96,3 +96,13 @@ spec:
 {{ toYaml .Values.prometheus.labels | indent 12 }}
   imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 4 }}
+{{- if .Values.prometheus.prometheusSpec.additionalScrapeConfigs }}
+  additionalScrapeConfigs:
+    name: {{ template "prometheus.fullname" . }}-additional-scrape-configs
+    key: additional-scrape-configs.yaml
+{{- end }}
+{{- if .Values.prometheus.prometheusSpec.additionalAlertManagerConfigs }}
+  additionalAlertManagerConfigs:
+    name: {{ template "prometheus.fullname" . }}-additional-alertmanager-configs
+    key: additional-alertmanager-configs.yaml
+{{- end }}

@@ -14,8 +14,9 @@ spec:
     scheme: https
     tlsConfig:
       caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-      serverName: kubernetes
-  jobLabel: component
+      serverName: {{ .Values.kubeApiServer.tlsConfig.serverName }}
+      insecureSkipVerify: {{ .Values.kubeApiServer.tlsConfig.insecureSkipVerify }}
+  jobLabel: {{ .Values.kubeApiServer.serviceMonitor.jobLabel }}
   namespaceSelector:
     matchNames:
     - default
