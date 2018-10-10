@@ -1,14 +1,20 @@
-{{- if .Values.prometheusOperator.serviceMonitor.selfMonitor }}
+{{- if and .Values.prometheusOperator.deploy .Values.prometheusOperator.serviceMonitor.selfMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "prometheus-operator.fullname" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-operator
   labels:
-{{ toYaml .Values.prometheusOperator.labels | indent 4 }}
+    app: {{ template "prometheus-operator.name" . }}-operator
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   endpoints:
   - port: http
     honorLabels: true
   selector:
-{{ toYaml .Values.prometheusOperator.serviceMonitor.selector | indent 4 }}
+    matchLabels:
+      app: {{ template "prometheus-operator.name" . }}-operator
+      release: {{ .Release.Name | quote }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace | quote }}
 {{- end }}

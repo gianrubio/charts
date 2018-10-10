@@ -1,44 +1,23 @@
-{{- if .Values.global.rbac.create }}
+{{- if and .Values.prometheus.deploy .Values.global.rbac.create }}
 apiVersion: rbac.authorization.k8s.io/v1
-items:
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: {{ template "prometheus.serviceAccountName" . }}
-    namespace: default
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: Role
-    name: {{ template "prometheus.serviceAccountName" . }}
-  subjects:
-  - kind: ServiceAccount
-    name: {{ template "prometheus.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: {{ template "prometheus.serviceAccountName" . }}
-    namespace: kube-system
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: Role
-    name: {{ template "prometheus.serviceAccountName" . }}
-  subjects:
-  - kind: ServiceAccount
-    name: {{ template "prometheus.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: {{ template "prometheus.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: Role
-    name: prometheus-k8s
-  subjects:
-  - kind: ServiceAccount
-    name: {{ template "prometheus.serviceAccountName" . }}
-    nnamespace: {{ .Release.Namespace }}
 kind: RoleBindingList
+items:
+{{- range uniq (append .Values.prometheus.rbac.roleNamespaces .Release.Namespace) }}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: {{ template "prometheus-operator.fullname" $ }}-prometheus
+    labels:  
+      app: {{ template "prometheus-operator.name" $ }}-prometheus
+{{ include "prometheus-operator.labels" $ | indent 6 }}
+    namespace: {{ . | quote }}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: {{ template "prometheus-operator.fullname" $ }}-prometheus
+  subjects:
+  - kind: ServiceAccount
+    name: {{ template "prometheus-operator.prometheus.serviceAccountName" $ }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
 {{- end }}

@@ -1,10 +1,11 @@
-{{- if and .Values.global.rbac.create .Values.global.rbac.pspEnable }}
-apiVersion: extensions/v1beta1
+{{- if and .Values.prometheusOperator.deploy .Values.global.rbac.create .Values.global.rbac.pspEnabled }}
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
+  name: {{ template "prometheus-operator.fullname" . }}-operator
   labels:
-{{ include "prometheus-operator.labels.standard" . | indent 4 }}
-  name: psp-{{ template "prometheus-operator.fullname" . }}
+    app: {{ template "prometheus-operator.name" . }}-operator
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   privileged: false
   # Required to prevent escalations to root.

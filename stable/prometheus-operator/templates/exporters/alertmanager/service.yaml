@@ -1,9 +1,11 @@
+{{- if .Values.alertmanager.deploy }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: alertmanager-main
-  labels:
-{{ toYaml .Values.alertmanager.labels | indent 4 }}
+  name: {{ template "prometheus-operator.fullname" . }}-alertmanager
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-alertmanager
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   ports:
     - name: web
@@ -14,5 +16,7 @@ spec:
       targetPort: 9093
       protocol: TCP
   selector:
-{{ toYaml .Values.alertmanager.service.selector | indent 4 }}
+    app: alertmanager
+    alertmanager: {{ template "prometheus-operator.fullname" . }}-alertmanager
   type: "{{ .Values.alertmanager.service.type }}"
+{{- end }}
