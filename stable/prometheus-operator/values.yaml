@@ -261,6 +261,19 @@ alertmanager:
   #           {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
   #           {{ end }}
 
+  ## Alertmanager StorageSpec for persistent data
+  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
+  ##
+  storageSpec: {}
+  #  volumeClaimTemplate:
+  #    spec:
+  #      storageClassName: gluster
+  #      accessModes: ["ReadWriteOnce"]
+  #      resources:
+  #        requests:
+  #          storage: 50Gi
+  #    selector: {}
+
 coreDns:
   ## If true, create a serviceMonitor for coredns
   ##
@@ -319,7 +332,7 @@ grafana:
       # - secretName: prometheus-general-tls
       #   hosts:
       #     - prometheus.example.com
-
+  
   dashboardsConfigMaps:
     grafana-dashboard-k8s-cluster-rsrc-use: grafana-dashboard-k8s-cluster-rsrc-use
     grafana-dashboard-k8s-node-rsrc-use: grafana-dashboard-k8s-node-rsrc-use
@@ -684,3 +697,16 @@ prometheus:
     resources: {}
       # requests:
       #   memory: 400Mi
+
+    ## Prometheus StorageSpec for persistent data
+    ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
+    ##
+    storageSpec: {}
+    #  volumeClaimTemplate:
+    #    spec:
+    #      storageClassName: gluster
+    #      accessModes: ["ReadWriteOnce"]
+    #      resources:
+    #        requests:
+    #          storage: 50Gi
+    #    selector: {}
