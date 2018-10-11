@@ -18,5 +18,5 @@ spec:
       protocol: TCP
       targetPort: 10055
   selector:
-{{ toYaml .Values.kubeDns.service.selector | indent 4 }}
+{{ include "prometheus-operator.rangeskipempty" .Values.kubeDns.service.selector | indent 4 }}
 {{- end }}

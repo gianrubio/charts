@@ -10,4 +10,5 @@ spec:
     port: 9090
     targetPort: web
   selector:
-{{ toYaml .Values.prometheus.service.selector | indent 4 }}
+{{ include "prometheus-operator.rangeskipempty" .Values.prometheus.service.selector | indent 4 }}
+

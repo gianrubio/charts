@@ -144,3 +144,14 @@ release: {{ .Release.Name | quote }}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end }}
 {{- end }}
+
+{{/*
+Workaround for https://github.com/helm/helm/issues/3117
+*/}}
+{{- define "prometheus-operator.rangeskipempty" -}}
+{{- range $key, $value := . }}
+{{- if $value }}
+{{ $key }}: {{ $value }}
+{{- end }}
+{{- end }}
+{{- end }}

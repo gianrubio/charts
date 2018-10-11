@@ -13,6 +13,6 @@ spec:
       port: {{ .Values.kubeControllerManager.service.port }}
       protocol: TCP
   selector:
-{{ toYaml .Values.kubeControllerManager.service.selector | indent 4 }}
+{{ include "prometheus-operator.rangeskipempty" .Values.kubeControllerManager.service.selector | indent 4 }}
   type: ClusterIP
 {{- end }}

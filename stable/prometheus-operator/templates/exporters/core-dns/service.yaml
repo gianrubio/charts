@@ -14,5 +14,5 @@ spec:
       protocol: TCP
       targetPort: {{ .Values.coreDns.service.port }}
   selector:
-{{ toYaml .Values.kubeDns.service.selector | indent 4 }}
+{{ include "prometheus-operator.rangeskipempty" .Values.coreDns.service.selector | indent 4 }}
 {{- end }}

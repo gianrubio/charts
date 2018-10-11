@@ -15,6 +15,6 @@ spec:
       targetPort: 9093
       protocol: TCP
   selector:
-{{ toYaml .Values.alertmanager.service.selector | indent 4 }}
+  {{ include "prometheus-operator.rangeskipempty" .Values.alertmanager.service.selector | indent 4 }}
   type: "{{ .Values.alertmanager.service.type }}"
 {{- end }}

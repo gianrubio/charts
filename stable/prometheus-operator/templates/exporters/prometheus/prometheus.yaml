@@ -12,7 +12,7 @@ spec:
 {{ toYaml .Values.prometheus.prometheusSpec.alertingEndpoints | indent 6 }}
 {{- else }}
       - namespace: {{ .Release.Namespace }}
-        name: alertmanager-main
+        name: {{ template "alertmanager.fullname" . }}
         port: web
 {{- end }}
   baseImage: "{{ .Values.prometheus.prometheusSpec.baseImage }}"
