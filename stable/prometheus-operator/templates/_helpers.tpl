@@ -12,8 +12,8 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "prometheus-operator.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.prometheusOperator.fullnameOverride -}}
+{{- .Values.prometheusOperator.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}
@@ -58,8 +58,8 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "alertmanager.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.alertmanager.fullnameOverride -}}
+{{- .Values.alertmanager.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "alertmanager" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -75,8 +75,8 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "prometheus.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.prometheus.fullnameOverride -}}
+{{- .Values.prometheus.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "prometheus" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -84,16 +84,16 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "prometheus.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "prometheus.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.prometheus.serviceAccount.create -}}
+    {{ default (include "prometheus.fullname" .) .Values.prometheus.serviceAccount.name }}
 {{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
+    {{ default "default" .Values.prometheus.serviceAccount.name }}
 {{- end -}}s
 {{- end -}}
 
 {{- define "kube-apiserver.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.kubeApiServer.fullnameOverride -}}
+{{- .Values.kubeApiServer.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "kube-apiserver" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -101,17 +101,17 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "kube-controller-manager.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.kubeControllerManager.fullnameOverride -}}
+{{- .Values.kubeControllerManager.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "kube-controller-manager-prometheus-discovery" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end }}
 {{- end }}
 
-{{- define "kubeScheduler.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- define "kube-scheduler.fullname" -}}
+{{- if .Values.kubeScheduler.fullnameOverride -}}
+{{- .Values.kubeScheduler.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "kube-scheduler-prometheus-discovery" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -119,8 +119,8 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "kube-dns.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.kubeDns.fullnameOverride -}}
+{{- .Values.kubeDns.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "kube-dns-prometheus-discovery" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -128,8 +128,8 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "core-dns.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.coreDns.fullnameOverride -}}
+{{- .Values.coreDns.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "core-dns-prometheus-discovery" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -137,8 +137,8 @@ release: {{ .Release.Name | quote }}
 {{- end }}
 
 {{- define "node-exporter.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.nodeexporter.fullnameOverride -}}
+{{- .Values.nodeexporter.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default "node-exporter" .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}

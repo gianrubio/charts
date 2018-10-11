@@ -553,6 +553,8 @@ prometheusOperator:
       k8s-app: prometheus-operator
 
 prometheus:
+  
+  fullnameOverride: prometheus-k8s
 
   affinity: {}
 

@@ -4,7 +4,7 @@ kind: Service
 metadata:
   labels:
 {{ toYaml .Values.kubeScheduler.labels | indent 4 }}
-  name: {{ template "kubeScheduler.fullname" . }}
+  name: {{ template "kube-scheduler.fullname" . }}
   namespace: kube-system
 spec:
   clusterIP: None

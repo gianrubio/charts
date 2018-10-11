@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "kubeScheduler.fullname" . }}
+  name: {{ template "kube-scheduler.fullname" . }}
   labels:    
     k8s-app: kube-scheduler
 {{ toYaml .Values.kubeScheduler.labels | indent 4}}
