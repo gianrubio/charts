@@ -715,5 +715,22 @@ prometheus:
     #          storage: 50Gi
     #    selector: {}
   
+    ## Provide additional scrape configurations
+    ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    ##
+    additionalScrapeConfigs: {}
+
+    ## Provide additional alertmanager configurations
+    ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+    ##
+    additionalAlertmanagerConfigs: {}
+    
+    ## Enable additional scrape configs that are managed externally to this chart. Note that the prometheus
+    ## will fail to provision if the correct secret does not exist.
+    ##
+    additionalScrapeConfigsExternal: false
+
   rbac:
+    
+    ## If enabled, allows Prometheus to perform service discovery at cluster-scope.
     grantAllResources: false
