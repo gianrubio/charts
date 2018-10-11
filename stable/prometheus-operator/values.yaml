@@ -50,6 +50,13 @@ global:
   imagePullSecrets: []
   #  - name: "image-pull-secret"
 
+  ## Hyperkube image to use when getting ThirdPartyResources & cleaning up
+  ##
+  hyperkube:
+    repository: gcr.io/google-containers/hyperkube
+    tag: v1.12.1
+    pullPolicy: IfNotPresent
+
 kubeletService:
   enable: true
 

@@ -1,40 +1,42 @@
-# {{- if and .Values.prometheusOperator.deploy .Values.createCustomResource }}
-# apiVersion: batch/v1
-# kind: Job
-# metadata:
-#   name: prometheus-operator-cleanup-crds
-#   namespace: {{ .Release.Namespace }}
-#   annotations:
-#     "helm.sh/hook": pre-delete
-#     "helm.sh/hook-weight": "3"
-#   labels:
-#     app: {{ template "prometheus-operator.name" . }}
-#     chart: {{ template "prometheus-operator.chart" . }}
-#     heritage: {{ .Release.Service }}
-#     release: {{ .Release.Name }}
-# spec:
-#   template:
-#     metadata:
-#       name: prometheus-operator-cleanup-crds
-#       labels:
-#         app: {{ template "prometheus-operator.name" . }}
-#         chart: {{ template "prometheus-operator.chart" . }}
-#         heritage: {{ .Release.Service }}
-#         release: {{ .Release.Name }}
-#     spec:
-#       serviceAccountName: {{ template "prometheus-operator.serviceAccountName" . }}
-#       containers:
-#         - name: kubectl
-#           image: "quay.io/coreos/hyperkube:v1.10.4_coreos.0"
-#           command:
-#           - /bin/sh
-#           - -c
-#           - >
-#               kubectl delete crd alertmanagers.monitoring.coreos.com;
-#               kubectl delete crd prometheuses.monitoring.coreos.com;
-#               kubectl delete crd prometheusrules.monitoring.coreos.com;
-#               kubectl delete crd servicemonitors.monitoring.coreos.com;
-#               # kubectl delete service prometheus-operated;
-#               # kubectl delete service alertmanager-operated;
-#       restartPolicy: OnFailure
-# {{- end }}
+{{- if and .Values.prometheusOperator.deploy .Values.createCustomResource }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prometheus-operator-cleanup-crds
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app: {{ template "prometheus-operator.name" . }}
+    chart: {{ template "prometheus-operator.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  template:
+    metadata:
+      name: prometheus-operator-cleanup-crds
+      labels:
+        app: {{ template "prometheus-operator.name" . }}
+        chart: {{ template "prometheus-operator.chart" . }}
+        heritage: {{ .Release.Service }}
+        release: {{ .Release.Name }}
+    spec:
+    {{- if .Values.global.rbac.create }}
+      serviceAccountName: {{ template "prometheus-operator.serviceAccountName" . }}
+    {{- end }}
+      containers:
+        - name: kubectl
+          image: "{{ .Values.global.hyperkube.repository }}:{{ .Values.global.hyperkube.tag }}"
+          imagePullPolicy: "{{ .Values.global.hyperkube.pullPolicy }}"
+          command:
+          - /bin/sh
+          - -c
+          - >
+              kubectl delete crd alertmanagers.monitoring.coreos.com;
+              kubectl delete crd prometheuses.monitoring.coreos.com;
+              kubectl delete crd prometheusrules.monitoring.coreos.com;
+              kubectl delete crd servicemonitors.monitoring.coreos.com;
+      restartPolicy: OnFailure
+{{- end }}
