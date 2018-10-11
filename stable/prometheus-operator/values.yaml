@@ -240,7 +240,7 @@ alertmanager:
     selfMonitor: true
     selector:
       matchLabels:
-        operated-alertmanager: true
+        alertmanager: main
 
   serviceAccount:
     # Specifies whether a ServiceAccount should be created

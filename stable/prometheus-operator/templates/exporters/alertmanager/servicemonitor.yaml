@@ -8,7 +8,7 @@ metadata:
 {{ toYaml .Values.alertmanager.labels | indent 4 }}
 spec:
   selector:
-{{ toYaml .Values.alertmanager.service.selector | indent 4 }}
+{{ toYaml .Values.alertmanager.serviceMonitor.selector | indent 4 }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace | quote }}
