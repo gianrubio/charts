@@ -1,4 +1,4 @@
-{{- if and .Values.prometheusOperator.deploy .Values.createCustomResource }}
+{{- if and .Values.prometheusOperator.deploy .Values.prometheusOperator.cleanupCustomResource }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -34,6 +34,11 @@ spec:
           - /bin/sh
           - -c
           - >
+              kubectl delete alertmanager   --all;
+              kubectl delete prometheus     --all;
+              kubectl delete prometheusrule --all;
+              kubectl delete servicemonitor --all;
+              sleep 10;
               kubectl delete crd alertmanagers.monitoring.coreos.com;
               kubectl delete crd prometheuses.monitoring.coreos.com;
               kubectl delete crd prometheusrules.monitoring.coreos.com;
