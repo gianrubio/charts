@@ -9,8 +9,17 @@ spec:
   replicas: {{ .Values.alertmanager.replicaCount }}
   serviceAccountName: {{ template "alertmanager.serviceAccountName" . }} 
   version: {{ .Values.alertmanager.image.tag}}
+  
 {{- if .Values.alertmanager.externalUrl }}
   externalUrl: "{{ .Values.alertmanager.externalUrl }}"
+{{- end }}
+
+{{- if .Values.alertmanager.externalUrl }}
+  externalUrl: "{{ .Values.alertmanager.externalUrl }}"
+{{- else if .Values.alertmanager.ingress.enabled }}
+  externalUrl: "http://{{ index .Values.alertmanager.ingress.hosts 0 }}{{ .Values.alertmanager.routePrefix }}"
+{{- else }}
+  externalUrl: http://alertmanager-main.{{ .Release.Namespace }}:9090
 {{- end }}
   resources:
 {{ toYaml .Values.alertmanager.resources | indent 4 }}

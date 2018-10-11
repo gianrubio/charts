@@ -418,7 +418,7 @@ kubeApiServer:
       provider: kubernetes
 
 kubelet:
-
+  enabled: true
   namespace: kube-system
   name: kubelet
 
@@ -557,19 +557,6 @@ prometheus:
     # The name of the ServiceAccount to use.
     # If not set and create is true, a name is generated using the fullname template
     name: prometheus-k8s
-
-  resources:
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # https://github.com/coreos/prometheus-operator/blob/master/contrib/kube-prometheus/manifests/0prometheus-operator-deployment.yaml#L29-L35
-    limits:
-      cpu: 200m
-      memory: 100Mi
-    requests:
-      cpu: 100m
-      memory: 50Mi
 
   tolerations: []
 

@@ -19,7 +19,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: "{{ .Values.image.pullPolicy }}"
           args:
-          {{- if .Values.kubelet.enable }}
+          {{- if .Values.kubelet.enabled }}
             - --kubelet-service={{ .Values.kubelet.namespace }}/{{ .Values.kubelet.name }}
           {{- end }}
             - --logtostderr=true

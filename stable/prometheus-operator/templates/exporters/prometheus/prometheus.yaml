@@ -22,7 +22,7 @@ spec:
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.externalUrl }}
   externalUrl: "{{ .Values.externalUrl }}"
-{{- else if .Values.prometheus.ingress.enable }}
+{{- else if .Values.prometheus.ingress.enabled }}
   externalUrl: "http://{{ index .Values.prometheus.ingress.hosts 0 }}{{ .Values.routePrefix }}"
 {{- else }}
   externalUrl: http://{{ template "prometheus.fullname" . }}.{{ .Release.Namespace }}:9090
