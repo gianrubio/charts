@@ -88,7 +88,7 @@ release: {{ .Release.Name | quote }}
     {{ default (include "prometheus.fullname" .) .Values.prometheus.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.prometheus.serviceAccount.name }}
-{{- end -}}s
+{{- end -}}
 {{- end -}}
 
 {{- define "kube-apiserver.fullname" -}}
