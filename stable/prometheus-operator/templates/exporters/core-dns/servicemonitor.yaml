@@ -1,15 +1,19 @@
-{{- if .Values.coreDns.serviceMonitor.selfMonitor }}
+{{- if .Values.coreDns.deploy }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  labels:
-    k8s-app: coredns
-{{ toYaml .Values.coreDns.labels | indent 4}}
-  name: coredns
+  name: {{ template "prometheus-operator.fullname" . }}-coredns
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-coredns
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
-  jobLabel: {{ .Values.coreDns.serviceMonitor.jobLabel }}
+  jobLabel: jobLabel
   selector:
-{{ toYaml .Values.coreDns.serviceMonitor.selector | indent 6 }}
+    matchLabels:
+      app: {{ template "prometheus-operator.name" . }}-coredns
+      release: {{ .Release.Name | quote }}
   namespaceSelector:
     matchNames:
       - "kube-system"

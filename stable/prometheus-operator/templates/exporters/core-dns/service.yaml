@@ -1,10 +1,14 @@
-{{- if .Values.coreDns.serviceMonitor.selfMonitor }}
+{{- if .Values.coreDns.deploy }}
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-{{ toYaml .Values.coreDns.labels | indent 4 }}
-  name: {{ template "core-dns.fullname" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-coredns
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-coredns
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+    jobLabel: coredns
   namespace: kube-system
 spec:
   clusterIP: None

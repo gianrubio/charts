@@ -1,10 +1,14 @@
-{{- if .Values.kubeDns.serviceMonitor.selfMonitor }}
+{{- if .Values.kubeDns.deploy }}
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-{{ toYaml .Values.kubeDns.labels | indent 4 }}
-  name: {{ template "kube-dns.fullname" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-kube-dns
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-kube-dns
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+    jobLabel: kube-dns
   namespace: kube-system
 spec:
   clusterIP: None

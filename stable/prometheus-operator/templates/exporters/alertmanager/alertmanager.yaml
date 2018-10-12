@@ -29,6 +29,10 @@ spec:
   storage:
 {{ toYaml .Values.alertmanager.storageSpec | indent 4 }}
 {{- end }}
+{{- if .Values.alertmanager.securityContext }}
+  securityContext:
+{{ toYaml .Values.alertmanager.securityContext | indent 4 }}
+{{- end }}  
 {{- if eq .Values.alertmanager.podAntiAffinity "hard" }}
   affinity:
     podAntiAffinity:

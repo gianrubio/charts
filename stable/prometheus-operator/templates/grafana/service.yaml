@@ -1,0 +1,19 @@
+{{- if and .Values.grafana.deploy .Values.grafana.prometheusOperatorServiceName }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.grafana.prometheusOperatorServiceName }}
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-grafana
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  ports:
+  - name: web
+    port: 9090
+    targetPort: web
+  selector:
+    app: prometheus
+    prometheus: {{ template "prometheus-operator.fullname" . }}-prometheus
+{{- end }}

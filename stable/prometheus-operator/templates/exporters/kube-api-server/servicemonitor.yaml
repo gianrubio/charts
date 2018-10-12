@@ -1,11 +1,13 @@
-{{- if .Values.kubeApiServer.serviceMonitor.selfMonitor }}
+{{- if .Values.kubeApiServer.deploy }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "kube-apiserver.fullname" . }}
-  labels:
-    k8s-app: apiserver
-{{ toYaml .Values.kubeApiServer.labels | indent 4}}
+  name: {{ template "prometheus-operator.fullname" . }}-apiserver
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-apiserver
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   endpoints:
   - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token

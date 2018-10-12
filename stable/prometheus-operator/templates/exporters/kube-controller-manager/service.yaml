@@ -1,10 +1,14 @@
-{{- if .Values.kubeControllerManager.serviceMonitor.selfMonitor }}
+{{- if .Values.kubeControllerManager.deploy }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "kube-controller-manager.fullname" . }}
-  labels:
-{{ toYaml .Values.kubeControllerManager.labels | indent 4 }}
+  name: {{ template "prometheus-operator.fullname" . }}-kube-controller-manager
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-kube-controller-manager
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+    jobLabel: kube-controller-manager
   namespace: kube-system
 spec:
   clusterIP: None

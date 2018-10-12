@@ -33,7 +33,7 @@ items:
   roleRef:
     apiGroup: rbac.authorization.k8s.io
     kind: Role
-    name: {{ template "prometheus.serviceAccountName" . }}
+    name: {{ template "prometheus-operator.fullname" . }}-prometheus
   subjects:
   - kind: ServiceAccount
     name: {{ template "prometheus-operator.fullname" . }}-prometheus

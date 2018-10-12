@@ -1,16 +1,19 @@
-{{- if .Values.nodeexporter.serviceMonitor.selfMonitor }}
+{{- if .Values.nodeexporter.deploy }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "node-exporter.fullname" . }}
-  labels:
-{{ toYaml .Values.nodeexporter.labels | indent 4 }}
+  name: {{ template "prometheus-operator.fullname" . }}-node-exporter
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-node-exporter
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
-  jobLabel: {{ .Values.nodeexporter.serviceMonitor.jobLabel }}
+  jobLabel: app
   selector:
-{{ toYaml .Values.nodeexporter.serviceMonitor.selector | indent 4 }}
-    matchNames:
-      - {{ .Release.Namespace | quote }}
+    matchLabels:
+      app: prometheus-node-exporter
+      release: {{ .Release.Name }}
   endpoints:
   - port: metrics
     interval: 30s

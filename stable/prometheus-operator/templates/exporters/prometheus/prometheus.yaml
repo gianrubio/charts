@@ -70,6 +70,10 @@ spec:
   remoteWrite:
 {{ toYaml .Values.prometheus.prometheusSpec.remoteWrite | indent 4 }}
 {{- end }}
+{{- if .Values.prometheus.prometheusSpec.securityContext }}
+  securityContext:
+{{ toYaml .Values.prometheus.prometheusSpec.securityContext | indent 4 }}
+{{- end }}  
 {{- if .Values.prometheus.prometheusSpec.ruleNamespaceSelector }}
   ruleNamespaceSelector:
 {{ toYaml .Values.prometheus.prometheusSpec.ruleNamespaceSelector | indent 4 }}
@@ -110,12 +114,12 @@ spec:
 {{ toYaml .Values.global.imagePullSecrets | indent 4 }}
 {{- if or .Values.prometheus.prometheusSpec.additionalScrapeConfigs .Values.prometheus.prometheusSpec.additionalScrapeConfigsExternal }}
   additionalScrapeConfigs:
-    name: {{ template "prometheus-operator.fullname" . }}-prometheus-additional-scrape-configs
+    name: {{ template "prometheus-operator.fullname" . }}-prometheus-scrape-confg
     key: additional-scrape-configs.yaml
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.additionalAlertManagerConfigs }}
   additionalAlertManagerConfigs:
-    name: {{ template "prometheus-operator.fullname" . }}-prometheus-additional-alertmanager-configs
+    name: {{ template "prometheus-operator.fullname" . }}-prometheus-am-confg
     key: additional-alertmanager-configs.yaml
 {{- end }}
 {{- end }}

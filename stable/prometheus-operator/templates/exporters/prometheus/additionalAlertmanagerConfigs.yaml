@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ template "prometheus-operator.fullname" . }}-prometheus-additional-alertmanager-configs
+  name: {{ template "prometheus-operator.fullname" . }}-prometheus-am-confg
   labels:  
-    app: {{ template "prometheus-operator.name" . }}-prometheus-additional-alertmanager-configs
+    app: {{ template "prometheus-operator.name" . }}-prometheus-am-confg
     chart: {{ template "prometheus-operator.chartref" . }}
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}

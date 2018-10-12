@@ -1,16 +1,21 @@
-{{- if .Values.kubeStateMetrics.serviceMonitor.selfMonitor }}
+{{- if .Values.kubeStateMetrics.deploy }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  labels:
-    k8s-app: kube-state-metrics
-  name: kube-state-metrics
+  name: {{ template "prometheus-operator.fullname" . }}-kube-state-metrics
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-kube-state-metrics
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
+  jobLabel: app
   endpoints:
   - interval: 30s
     port: http
     honorLabels: true
-  jobLabel: {{ .Values.kubeStateMetrics.serviceMonitor.jobLabel }}
   selector:
-{{ toYaml .Values.kubeStateMetrics.serviceMonitor.selector | indent 4 }}
+    matchLabels:
+      app: kube-state-metrics
+      release: "{{ .Release.Name }}"
 {{- end }}

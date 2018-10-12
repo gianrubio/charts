@@ -1,10 +1,13 @@
-{{- if .Values.kubelet.serviceMonitor.selfMonitor }}
+{{- if .Values.kubelet.deploy }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  labels:
-    k8s-app: kubelet
-  name: kubelet
+  name: {{ template "prometheus-operator.fullname" . }}-kubelet
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-kubelet
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   endpoints:
   {{- if .Values.kubelet.serviceMonitor.https }}
@@ -36,7 +39,9 @@ spec:
   jobLabel: k8s-app
   namespaceSelector:
     matchNames:
-    - kube-system
+    - {{ .Values.kubelet.namespace }}
   selector:
-{{ toYaml .Values.kubelet.serviceMonitor.selector | indent 4 }}
+    matchNames:
+    - {{ .Values.kubelet.name }}
+#{{ toYaml .Values.kubelet.serviceMonitor.selector | indent 4 }}
 {{- end}}

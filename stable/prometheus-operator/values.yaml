@@ -281,31 +281,29 @@ alertmanager:
   #          storage: 50Gi
   #    selector: {}
 
-coreDns:
-  ## If true, create a serviceMonitor for coredns
+  ## SecurityContext holds pod-level security attributes and common container settings. 
+  ## This defaults to non root user with uid 1000 and gid 2000.
+  ## https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md
   ##
-  serviceMonitor:
-    selfMonitor: true
-    jobLabel: k8s-app
-    selector:
-      matchLabels:
-        k8s-app: coredns
+  securityContext: {}
 
-  labels:
-    k8s-app: coredns
-
-  # Port that core DNS Metrics are exposed on
+coreDns:
+  ## If true, deploy the coreDns service monitor
+  deploy: true
+  
   service:
-
-    port: 9153
-
-    # The k8s-app label coredns service is deployed with
+    ## The k8s-app label coredns service is deployed with
+    ##
     selector:
       k8s-app: coredns
+    ## Port that core DNS Metrics are exposed on
+    ##
+    port: 9153
 
 # Using default values from https://github.com/helm/charts/blob/master/stable/grafana/values.yaml
 grafana:
   deploy: true
+  prometheusOperatorServiceName: prometheus-grafana
   adminPassword: prom-operator
 
   ingress:
@@ -355,7 +353,7 @@ grafana:
         type: prometheus
         # TODO: Create dedicated service so Grafana can read this Prometheus instance
         #       manipulate this string to create it
-        url: http://prometheus-k8s.monitoring:9090
+        url: http://prometheus-grafana:9090
         access: proxy
         isDefault: true
 
@@ -407,17 +405,13 @@ grafana:
           path: /var/lib/grafana/dashboards/grafana-dashboard-statefulset
 
 kubeApiServer:
-
-  labels:
-    k8s-app: kube-apiserver
-
+  deploy: true
   tlsConfig:
     serverName: kubernetes
     insecureSkipVerify: false
     
   serviceMonitor:
     jobLabel: component
-    selfMonitor: true
     selector:
       matchLabels:
         component: apiserver
@@ -428,69 +422,26 @@ kubelet:
   namespace: kube-system
   name: kubelet
 
-  labels:
-    k8s-app: kubelet
-
   serviceMonitor:
-    jobLabel: k8s-app
-    selfMonitor: true
-    selector:
-      matchLabels:
-        k8s-app: kubelet
     # https://github.com/coreos/prometheus-operator/issues/926
     https: false
 
-
-  service:
-    selector:
-      k8s-app: kubelet
-
 kubeControllerManager:
-
-  labels:
-    k8s-app: kube-controller-manager
-
-  serviceMonitor:
-    jobLabel: k8s-app
-    selfMonitor: true
-    selector:
-      matchLabels:
-        k8s-app: kube-controller-manager
-
+  deploy: true
   service:
     port: 10252
     targetPort: 10252
     selector:
       k8s-app: kube-controller-manager
 
-
 kubeDns:
-  serviceMonitor:
-    jobLabel: k8s-app
-    selfMonitor: true
-    selector:
-      matchLabels:
-        k8s-app: kube-dns
-
-  labels:
-    k8s-app: kube-dns
-
+  deploy: false
   service:
     selector:
       k8s-app: kube-dns
 
 kubeScheduler:
-
-  serviceMonitor:
-    selfMonitor: true
-    jobLabel: k8s-app
-    selector:
-      matchLabels:
-        k8s-app: kube-scheduler
-
-  labels:
-    k8s-app: kube-scheduler
-
+  deploy: true
   service:
     selector:
       k8s-app: kube-scheduler
@@ -500,43 +451,17 @@ kubeScheduler:
 kubeStateMetrics:
   deploy: true
 
-  serviceMonitor:
-    selfMonitor: true
-    jobLabel: app
-    selector:
-      matchLabels:
-        app: kube-state-metrics
-
-  labels:
-    k8s-app: kube-state-metrics
-
-  service:
-    selector:
-      k8s-app: kube-state-metrics
-
 kube-state-metrics:
   rbac:
     create: true
-    serviceAccountName: prometheus-operator-kube-state-metrics
-
-prometheus-node-exporter:
-
-  podLabels:
-    k8s-app: node-exporter
-
-  extraArgs:
-    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
-    - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
 
 nodeexporter:
   deploy: true
 
-  serviceMonitor:
-    selfMonitor: true
-    jobLabel: k8s-app
-    selector:
-      matchLabels:
-        k8s-app: node-exporter
+prometheus-node-exporter:
+  extraArgs:
+    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+    - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
 
 prometheusOperator:
   deploy: true
@@ -715,6 +640,12 @@ prometheus:
     ##
     additionalAlertmanagerConfigs: []
     
+    ## SecurityContext holds pod-level security attributes and common container settings. 
+    ## This defaults to non root user with uid 1000 and gid 2000.
+    ## https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md
+    ##
+    securityContext: {}
+
     ## Enable additional scrape configs that are managed externally to this chart. Note that the prometheus
     ## will fail to provision if the correct secret does not exist.
     ##
