@@ -2,18 +2,25 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  labels: 
-{{ toYaml .Values.prometheusOperator.labels | indent 4 }}
-  name: {{ template "prometheus-operator.fullname" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-operator
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-operator
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-{{ toYaml .Values.prometheusOperator.labels | indent 6 }}
+      app: {{ template "prometheus-operator.name" . }}-operator
+      release: {{ .Release.Name | quote }}
   template:
     metadata:
       labels: 
-{{ toYaml .Values.prometheusOperator.labels | indent 8 }}
+        app: {{ template "prometheus-operator.name" . }}-operator
+        chart: {{ template "prometheus-operator.chartref" . }}
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
     spec:
       containers:
         - name: {{ template "prometheus-operator.name" . }}
@@ -39,7 +46,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534          
     {{- if and .Values.serviceAccount }}
-      serviceAccountName: {{ template "prometheus-operator.fullname" . }}
+      serviceAccountName: {{ template "prometheus-operator.fullname" . }}-operator
     {{- end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:

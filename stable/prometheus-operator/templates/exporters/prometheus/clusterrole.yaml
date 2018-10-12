@@ -1,8 +1,13 @@
-{{- if .Values.global.rbac.create }}
+{{- if and .Values.prometheus.deploy .Values.global.rbac.create }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "prometheus.serviceAccountName" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-prometheus
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-prometheus
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 rules:
 - apiGroups:
   - ""

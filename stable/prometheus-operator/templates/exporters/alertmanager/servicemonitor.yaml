@@ -2,13 +2,17 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: alertmanager
-  labels:
-    k8s-app: alertmanager  
-{{ toYaml .Values.alertmanager.labels | indent 4 }}
+  name: {{ template "prometheus-operator.fullname" . }}-alertmanager
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-alertmanager
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   selector:
-{{ toYaml .Values.alertmanager.serviceMonitor.selector | indent 4 }}
+    matchLabels:
+      app: {{ template "prometheus-operator.name" . }}-alertmanager
+      release: {{ .Release.Name | quote }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace | quote }}

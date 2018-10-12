@@ -2,25 +2,26 @@
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
-  labels:
-{{ toYaml .Values.alertmanager.labels | indent 4 }}
-  name: main
+  name: {{ template "prometheus-operator.fullname" . }}-alertmanager
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-alertmanager
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   baseImage: {{ .Values.alertmanager.image.repository }}
   replicas: {{ .Values.alertmanager.replicaCount }}
-  serviceAccountName: {{ template "alertmanager.serviceAccountName" . }} 
+  serviceAccountName: {{ template "prometheus-operator.fullname" . }}-alertmanager
   version: {{ .Values.alertmanager.image.tag}}
-  
 {{- if .Values.alertmanager.externalUrl }}
   externalUrl: "{{ .Values.alertmanager.externalUrl }}"
 {{- end }}
-
 {{- if .Values.alertmanager.externalUrl }}
   externalUrl: "{{ .Values.alertmanager.externalUrl }}"
 {{- else if .Values.alertmanager.ingress.enabled }}
   externalUrl: "http://{{ index .Values.alertmanager.ingress.hosts 0 }}{{ .Values.alertmanager.routePrefix }}"
 {{- else }}
-  externalUrl: http://alertmanager-main.{{ .Release.Namespace }}:9090
+  externalUrl: http://{{ template "prometheus-operator.fullname" . }}-alertmanager.{{ .Release.Namespace }}:9090
 {{- end }}
   resources:
 {{ toYaml .Values.alertmanager.resources | indent 4 }}
@@ -35,8 +36,8 @@ spec:
       - topologyKey: kubernetes.io/hostname
         labelSelector:
           matchLabels:
-            app: {{ template "alertmanager.name" . }}
-            alertmanager: {{ .Release.Name }}
+            app: alertmanager
+            alertmanager: {{ template "prometheus-operator.fullname" . }}-alertmanager
 {{- else if eq .Values.alertmanager.podAntiAffinity "soft" }}
   affinity:
     podAntiAffinity:
@@ -46,7 +47,7 @@ spec:
           topologyKey: kubernetes.io/hostname
           labelSelector:
             matchLabels:
-              app: {{ template "alertmanager.name" . }}
-              alertmanager: {{ .Release.Name }}
+              app: alertmanager
+              alertmanager: {{ template "prometheus-operator.fullname" . }}-alertmanager
 {{- end }}
 {{- end }}

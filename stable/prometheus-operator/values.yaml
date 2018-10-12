@@ -63,9 +63,10 @@ serviceMonitors: []
   ##
   # - name: ""
 
-    ## Labels to set used for the ServiceMonitorSelector.
+    ## Additional labels to set used for the ServiceMonitorSelector. Together with standard labels from
+    ## the chart
     ##
-    # serviceMonitorSelectorLabels: {}
+    # additionalLabels: {}
 
     ## Service label for use in assembling a job name of the form <label value>-<port>
     ## If no label is specified, the service name is used.
@@ -352,6 +353,8 @@ grafana:
       datasources:
       - name: Prometheus
         type: prometheus
+        # TODO: Create dedicated service so Grafana can read this Prometheus instance
+        #       manipulate this string to create it
         url: http://prometheus-k8s.monitoring:9090
         access: proxy
         isDefault: true
@@ -553,10 +556,8 @@ prometheusOperator:
     selector:
       k8s-app: prometheus-operator
 
-prometheus:
-  
-  fullnameOverride: prometheus-k8s
-
+prometheus:  
+  deploy: true
   affinity: {}
 
   serviceAccount:
@@ -598,21 +599,8 @@ prometheus:
       #   hosts:
       #     - prometheus.example.com
 
-  labels:
-    app: prometheus
-    k8s-app: prometheus
-
   serviceMonitor:
     selfMonitor: true
-    selector:
-      matchLabels:
-        app: prometheus
-        k8s-app: prometheus
-
-  service:
-    selector:
-      app: prometheus
-      k8s-app: prometheus
 
   prometheusSpec:
 
@@ -636,10 +624,10 @@ prometheus:
     ##
     externalUrl: ""
 
-    ruleSelector:
-      matchLabels:
-        prometheus: k8s
-        role: alert-rules
+    # ruleSelector:
+    #   matchLabels:
+    #     prometheus: k8s
+    #     role: alert-rules
 
     ## serviceMonitorSelector will limit which servicemonitors are used to create scrape
     ## configs in Prometheus. By default all are loaded
@@ -676,10 +664,11 @@ prometheus:
     ##
     routePrefix: /
 
-    podMetadata:
-      labels:
-        app: prometheus
-        k8s-app: prometheus
+    # podMetadata:
+    #  labels:
+    #    app: prometheus
+    #    k8s-app: prometheus
+    
     ## Pod anti-affinity can prevent the scheduler from placing Prometheus replicas on the same node.
     ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
     ## The value "hard" means that the scheduler is *required* to not schedule two replica pods onto the same node.

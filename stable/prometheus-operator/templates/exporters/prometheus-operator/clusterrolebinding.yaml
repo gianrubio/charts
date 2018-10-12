@@ -2,15 +2,18 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ template "prometheus-operator.fullname" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-operator
   labels:
-{{ include "prometheus-operator.labels.standard" . | indent 4 }}
+    app: {{ template "prometheus-operator.name" . }}-operator
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ template "prometheus-operator.fullname" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-operator
 subjects:
 - kind: ServiceAccount
-  name: {{ template "prometheus-operator.serviceAccountName" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-operator
   namespace: {{ .Release.Namespace }}
 {{- end }}

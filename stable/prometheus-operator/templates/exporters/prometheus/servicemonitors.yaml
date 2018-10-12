@@ -1,4 +1,4 @@
-{{- if .Values.serviceMonitors }}
+{{- if and .Values.prometheus.deploy .Values.serviceMonitors }}
 apiVersion: v1
 kind: List
 items:
@@ -6,11 +6,15 @@ items:
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
     metadata:
-      labels:
-        {{- if .serviceMonitorSelectorLabels }}
-{{ toYaml .serviceMonitorSelectorLabels | indent 8 }}
-        {{- end }}
       name: {{ .name }}
+      labels:
+        app: {{ template "prometheus-operator.name" $ }}-prometheus
+        chart: {{ template "prometheus-operator.chartref" $ }}
+        release: {{ $.Release.Name | quote }}
+        heritage: {{ $.Release.Service | quote }}
+        {{- if .additionalLabels }}
+{{ toYaml .additionalLabels | indent 8 }}
+        {{- end }}
     spec:
       endpoints:
 {{ toYaml .endpoints | indent 8 }}

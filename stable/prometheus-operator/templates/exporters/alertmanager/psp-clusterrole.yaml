@@ -2,11 +2,16 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: psp-alertmanager
+  name: {{ template "prometheus-operator.fullname" . }}-alertmanager
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-alertmanager
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 rules:
 - apiGroups: ['extensions']
   resources: ['podsecuritypolicies']
   verbs:     ['use']
   resourceNames:
-  - {{ template "alertmanager.serviceAccountName" . }}
+  - {{ template "prometheus-operator.fullname" . }}-alertmanager
 {{- end }}

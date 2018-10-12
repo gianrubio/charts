@@ -1,13 +1,19 @@
+{{- if .Values.prometheus.deploy }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ template "prometheus.serviceAccountName" . }}config
-  namespace: {{ .Release.Namespace }}
+  name: {{ template "prometheus-operator.fullname" . }}-prometheus-config
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-prometheus
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "prometheus.serviceAccountName" . }}-config
+  name: {{ template "prometheus-operator.fullname" . }}-prometheus
 subjects:
 - kind: ServiceAccount
-  name: {{ template "prometheus.serviceAccountName" . }}
+  name: {{ template "prometheus-operator.fullname" . }}-prometheus
   namespace: {{ .Release.Namespace }}}
+{{- end }}

@@ -1,10 +1,13 @@
-{{- if .Values.prometheus.prometheusSpec.additionalAlertManagerConfigs }}
+{{- if and .Values.prometheus.deploy .Values.prometheus.prometheusSpec.additionalAlertManagerConfigs }}
 apiVersion: v1
 kind: Secret
 metadata:
-  labels:
-{{ toYaml .Values.prometheus.labels | indent 4 }}
-  name: {{ template "prometheus.fullname" . }}-additional-alertmanager-configs
+  name: {{ template "prometheus-operator.fullname" . }}-prometheus-additional-alertmanager-configs
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-prometheus-additional-alertmanager-configs
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 data:
   additional-alertmanager-configs.yaml: {{ toYaml .Values.prometheus.prometheusSpec.additionalAlertManagerConfigs | b64enc | quote }}
 {{- end }}

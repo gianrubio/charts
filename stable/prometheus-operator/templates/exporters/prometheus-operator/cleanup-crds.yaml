@@ -2,29 +2,29 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: prometheus-operator-cleanup-crds
+  name: {{ template "prometheus-operator.fullname" . }}-operator-cleanup
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "3"
     "helm.sh/hook-delete-policy": hook-succeeded
   labels:
-    app: {{ template "prometheus-operator.name" . }}
-    chart: {{ template "prometheus-operator.chart" . }}
-    heritage: {{ .Release.Service }}
-    release: {{ .Release.Name }}
+    app: {{ template "prometheus-operator.name" . }}-operator
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   template:
     metadata:
-      name: prometheus-operator-cleanup-crds
+      name: {{ template "prometheus-operator.fullname" . }}-operator-cleanup
       labels:
-        app: {{ template "prometheus-operator.name" . }}
-        chart: {{ template "prometheus-operator.chart" . }}
-        heritage: {{ .Release.Service }}
-        release: {{ .Release.Name }}
+        app: {{ template "prometheus-operator.name" . }}-operator
+        chart: {{ template "prometheus-operator.chartref" . }}
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
     spec:
     {{- if .Values.global.rbac.create }}
-      serviceAccountName: {{ template "prometheus-operator.serviceAccountName" . }}
+      serviceAccountName: {{ template "prometheus-operator.fullname" . }}-operator
     {{- end }}
       containers:
         - name: kubectl

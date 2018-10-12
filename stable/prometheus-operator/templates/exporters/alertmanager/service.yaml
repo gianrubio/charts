@@ -2,9 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "alertmanager.fullname" . }}
-  labels:
-{{ toYaml .Values.alertmanager.labels | indent 4 }}
+  name: {{ template "prometheus-operator.fullname" . }}-alertmanager
+  labels:  
+    app: {{ template "prometheus-operator.name" . }}-alertmanager
+    chart: {{ template "prometheus-operator.chartref" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   ports:
     - name: web
@@ -15,6 +18,7 @@ spec:
       targetPort: 9093
       protocol: TCP
   selector:
-  {{ include "prometheus-operator.rangeskipempty" .Values.alertmanager.service.selector | indent 4 }}
+    app: alertmanager
+    alertmanager: {{ template "prometheus-operator.fullname" . }}-alertmanager
   type: "{{ .Values.alertmanager.service.type }}"
 {{- end }}
