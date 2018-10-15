@@ -39,6 +39,16 @@ alertmanager:
     create: true
     name: ""
 
+  ## Configure pod disruption budgets for Alertmanager
+  ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
+  ## This configuration is immutable once created and will require the PDB to be deleted to be changed
+  ## https://github.com/kubernetes/kubernetes/issues/45398
+  ##
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: ""
+
   ## Alertmanager configuration directives
   ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
   ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
@@ -502,6 +512,16 @@ prometheus:
     create: true
     name: ""
 
+  ## Configure pod disruption budgets for Prometheus
+  ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
+  ## This configuration is immutable once created and will require the PDB to be deleted to be changed
+  ## https://github.com/kubernetes/kubernetes/issues/45398
+  ##
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: ""
+
   ingress:
     enabled: false
     annotations: {}
@@ -514,7 +534,7 @@ prometheus:
     #   - prometheus.domain.com
     hosts: []
 
-    ## TLS configuration for prometheus Ingress
+    ## TLS configuration for Prometheus Ingress
     ## Secret must be manually created in the namespace
     ##
     tls: []
