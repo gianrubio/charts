@@ -18,15 +18,15 @@ spec:
         name: {{ template "prometheus-operator.fullname" . }}-alertmanager
         port: web
 {{- end }}
-  baseImage: "{{ .Values.prometheus.prometheusSpec.baseImage }}"
+  baseImage: "{{ .Values.prometheus.prometheusSpec.image.repository }}"
 {{- if .Values.prometheus.prometheusSpec.externalLabels }}
   externalLabels:
 {{ toYaml .Values.prometheus.prometheusSpec.externalLabels | indent 4}}
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.externalUrl }}
-  externalUrl: "{{ .Values.externalUrl }}"
+  externalUrl: "{{ .Values.prometheus.prometheusSpec.externalUrl }}"
 {{- else if .Values.prometheus.ingress.enabled }}
-  externalUrl: "http://{{ index .Values.prometheus.ingress.hosts 0 }}{{ .Values.routePrefix }}"
+  externalUrl: "http://{{ index .Values.prometheus.ingress.hosts 0 }}{{ .Values.prometheus.prometheusSpec.routePrefix }}"
 {{- else }}
   externalUrl: http://{{ template "prometheus-operator.fullname" . }}-prometheus.{{ .Release.Namespace }}:9090
 {{- end }}
@@ -35,13 +35,16 @@ spec:
 {{ toYaml .Values.prometheus.prometheusSpec.nodeSelector | indent 4 }}
 {{- end }}
   paused: {{ .Values.prometheus.prometheusSpec.paused }}
-  replicas: {{ .Values.prometheus.prometheusSpec.replicaCount }}
+  replicas: {{ .Values.prometheus.prometheusSpec.replicas }}
   logLevel:  {{ .Values.prometheus.prometheusSpec.logLevel }}
+  listenLocal: {{ .Values.prometheus.prometheusSpec.listenLocal }}
+{{- if .Values.prometheus.prometheusSpec.resources }}
   resources:
 {{ toYaml .Values.prometheus.prometheusSpec.resources | indent 4 }}
-  retention: "{{ .Values.prometheus.prometheusSpec.retention }}"
+{{- end }}
+  retention: {{ .Values.prometheus.prometheusSpec.retention | quote  }}
 {{- if .Values.prometheus.prometheusSpec.routePrefix }}
-  routePrefix: "{{ .Values.prometheus.prometheusSpec.routePrefix }}"
+  routePrefix: {{ .Values.prometheus.prometheusSpec.routePrefix | quote  }}
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.secrets }}
   secrets:
@@ -74,6 +77,7 @@ spec:
   securityContext:
 {{ toYaml .Values.prometheus.prometheusSpec.securityContext | indent 4 }}
 {{- end }}  
+
 {{- if .Values.prometheus.prometheusSpec.ruleNamespaceSelector }}
   ruleNamespaceSelector:
 {{ toYaml .Values.prometheus.prometheusSpec.ruleNamespaceSelector | indent 4 }}
@@ -90,28 +94,40 @@ spec:
   storage:
 {{ toYaml .Values.prometheus.prometheusSpec.storageSpec | indent 4 }}
 {{- end }}
-  version: "{{ .Values.prometheus.prometheusSpec.version }}"
+  version: "{{ .Values.prometheus.prometheusSpec.image.tag }}"
   {{- if .Values.prometheus.prometheusSpec.podMetadata }}
   podMetadata:
 {{ toYaml .Values.prometheus.prometheusSpec.podMetadata | indent 4 }}
   {{- end }}
+{{- if eq .Values.prometheus.prometheusSpec.podAntiAffinity "hard" }}
   affinity:
     podAntiAffinity:
-{{- if eq .Values.prometheus.prometheusSpec.podAntiAffinity "hard" }}
       requiredDuringSchedulingIgnoredDuringExecution:
       - topologyKey: kubernetes.io/hostname
-{{- else if eq .Values.prometheus.prometheusSpec.podAntiAffinity "soft" }}
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          topologyKey: kubernetes.io/hostname
-{{- end }}
         labelSelector:
           matchLabels:
             app: prometheus
             prometheus: {{ template "prometheus-operator.fullname" . }}-prometheus
+{{- else if eq .Values.prometheus.prometheusSpec.podAntiAffinity "soft" }}
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchLabels:
+              app: prometheus
+              prometheus: {{ template "prometheus-operator.fullname" . }}-prometheus
+{{- end }}
+{{- if .Values.prometheus.prometheusSpec.tolerations }}
+  tolerations:
+{{ toYaml .Values.prometheus.prometheusSpec.tolerations | indent 4 }}
+{{- end }}
+{{- if .Values.global.imagePullSecrets }}
   imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 4 }}
+{{- end }}
 {{- if or .Values.prometheus.prometheusSpec.additionalScrapeConfigs .Values.prometheus.prometheusSpec.additionalScrapeConfigsExternal }}
   additionalScrapeConfigs:
     name: {{ template "prometheus-operator.fullname" . }}-prometheus-scrape-confg
@@ -121,5 +137,12 @@ spec:
   additionalAlertManagerConfigs:
     name: {{ template "prometheus-operator.fullname" . }}-prometheus-am-confg
     key: additional-alertmanager-configs.yaml
+{{- end }}
+{{- if .Values.prometheus.prometheusSpec.containers }}
+  containers:
+{{ toYaml .Values.prometheus.prometheusSpec.containers | indent 4 }}
+{{- end }}
+{{- if .Values.prometheus.prometheusSpec.priorityClassName }}
+  priorityClassName: {{ .Values.prometheus.prometheusSpec.priorityClassName }}
 {{- end }}
 {{- end }}

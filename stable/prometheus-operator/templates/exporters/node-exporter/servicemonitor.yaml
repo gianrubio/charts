@@ -9,7 +9,7 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 spec:
-  jobLabel: app
+  jobLabel: {{ .Values.nodeexporter.jobLabel }}
   selector:
     matchLabels:
       app: prometheus-node-exporter

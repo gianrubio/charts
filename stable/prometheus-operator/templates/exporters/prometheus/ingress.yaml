@@ -1,4 +1,4 @@
-{{- if and .Values.prometheus.deploy .Values.prometheus.ingress.enable }}
+{{- if and .Values.prometheus.deploy .Values.prometheus.ingress.enabled }}
 {{- $routePrefix := .Values.prometheus.routePrefix }}
 {{- $serviceName := printf "%s-%s" (include "prometheus-operator.fullname" .) "prometheus" }}
 apiVersion: extensions/v1beta1

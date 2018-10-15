@@ -24,16 +24,16 @@ spec:
     spec:
       containers:
         - name: {{ template "prometheus-operator.name" . }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          image: "{{ .Values.prometheusOperator.image.repository }}:{{ .Values.prometheusOperator.image.tag }}"
+          imagePullPolicy: "{{ .Values.prometheusOperator.image.pullPolicy }}"
           args:
-          {{- if .Values.kubelet.enabled }}
-            - --kubelet-service={{ .Values.kubelet.namespace }}/{{ .Values.kubelet.name }}
+          {{- if .Values.prometheusOperator.kubeletService.enabled }}
+            - --kubelet-service={{ .Values.prometheusOperator.kubeletService.namespace }}/{{ .Values.prometheusOperator.kubeletService.name }}
           {{- end }}
             - --logtostderr=true
             - --localhost=127.0.0.1
-            - --prometheus-config-reloader={{ .Values.prometheusConfigReloader.repository }}:{{ .Values.prometheusConfigReloader.tag }}
-            - --config-reloader-image={{ .Values.configmapReload.repository }}:{{ .Values.configmapReload.tag }}
+            - --prometheus-config-reloader={{ .Values.prometheusOperator.prometheusConfigReloader.repository }}:{{ .Values.prometheusOperator.prometheusConfigReloader.tag }}
+            - --config-reloader-image={{ .Values.prometheusOperator.configmapReload.repository }}:{{ .Values.prometheusOperator.configmapReload.tag }}
           ports:
             - containerPort: 8080
               name: http
@@ -45,7 +45,7 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534          
-    {{- if and .Values.serviceAccount }}
+    {{- if .Values.global.rbac.create }}
       serviceAccountName: {{ template "prometheus-operator.fullname" . }}-operator
     {{- end }}
     {{- with .Values.nodeSelector }}

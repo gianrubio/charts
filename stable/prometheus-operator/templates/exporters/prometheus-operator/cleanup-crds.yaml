@@ -28,8 +28,8 @@ spec:
     {{- end }}
       containers:
         - name: kubectl
-          image: "{{ .Values.global.hyperkube.repository }}:{{ .Values.global.hyperkube.tag }}"
-          imagePullPolicy: "{{ .Values.global.hyperkube.pullPolicy }}"
+          image: "{{ .Values.prometheusOperator.hyperkube.repository }}:{{ .Values.prometheusOperator.hyperkube.tag }}"
+          imagePullPolicy: "{{ .Values.prometheusOperator.hyperkube.pullPolicy }}"
           command:
           - /bin/sh
           - -c

@@ -16,7 +16,7 @@ spec:
     - name: http-metrics
       port: {{ .Values.coreDns.service.port }}
       protocol: TCP
-      targetPort: {{ .Values.coreDns.service.port }}
+      targetPort: {{ .Values.coreDns.service.targetPort }}
   selector:
 {{ include "prometheus-operator.rangeskipempty" .Values.coreDns.service.selector | indent 4 }}
 {{- end }}
