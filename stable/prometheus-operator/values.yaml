@@ -2,6 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## Labels to apply to all resources
+##
+commonLabels: {}
+  # scmhash: abc123
+  # myLabel: aakkmd
+
 ## Create prometheus rules resource
 ##
 rules:

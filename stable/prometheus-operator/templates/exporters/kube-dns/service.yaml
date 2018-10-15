@@ -5,10 +5,8 @@ metadata:
   name: {{ template "prometheus-operator.fullname" . }}-kube-dns
   labels:  
     app: {{ template "prometheus-operator.name" . }}-kube-dns
-    chart: {{ template "prometheus-operator.chartref" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
     jobLabel: kube-dns
+{{ include "prometheus-operator.labels" . | indent 4 }}
   namespace: kube-system
 spec:
   clusterIP: None

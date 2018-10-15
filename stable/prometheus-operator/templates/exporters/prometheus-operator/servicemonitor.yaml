@@ -5,9 +5,7 @@ metadata:
   name: {{ template "prometheus-operator.fullname" . }}-operator
   labels:
     app: {{ template "prometheus-operator.name" . }}-operator
-    chart: {{ template "prometheus-operator.chartref" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   endpoints:
   - port: http

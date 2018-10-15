@@ -1,7 +1,5 @@
 {{/* vim: set filetype=mustache: */}}
-{{/*
-Expand the name of the chart.
-*/}}
+{{/* Expand the name of the chart. */}}
 {{- define "prometheus-operator.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end }}
@@ -18,16 +16,22 @@ which gives 16 charachters for a release name without it being trimmed
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end }}
 
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
+{{/* Create chart name and version as used by the chart label. */}}
 {{- define "prometheus-operator.chartref" -}}
 {{- replace "+" "_" .Chart.Version | printf "%s-%s" .Chart.Name -}}
 {{- end }}
 
-{{/*
-Workaround for https://github.com/helm/helm/issues/3117
-*/}}
+{{/* Generate basic labels */}}
+{{- define "prometheus-operator.labels" }}
+chart: {{ template "prometheus-operator.chartref" . }}
+release: {{ .Release.Name | quote }}
+heritage: {{ .Release.Service | quote }}
+{{- if .Values.commonLabels}}
+{{ toYaml .Values.commonLabels }}
+{{- end }}
+{{- end }}
+
+{{/* Workaround for https://github.com/helm/helm/issues/3117 */}}
 {{- define "prometheus-operator.rangeskipempty" -}}
 {{- range $key, $value := . }}
 {{- if $value }}

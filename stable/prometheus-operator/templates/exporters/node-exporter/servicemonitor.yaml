@@ -5,9 +5,7 @@ metadata:
   name: {{ template "prometheus-operator.fullname" . }}-node-exporter
   labels:  
     app: {{ template "prometheus-operator.name" . }}-node-exporter
-    chart: {{ template "prometheus-operator.chartref" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   jobLabel: {{ .Values.nodeexporter.jobLabel }}
   selector:

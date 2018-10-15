@@ -7,9 +7,7 @@ metadata:
   name: alertmanagers.monitoring.coreos.com
   labels:
     app: {{ template "prometheus-operator.name" . }}-operator
-    chart: {{ template "prometheus-operator.chartref" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 4 }}
   annotations:
     "helm.sh/hook": crd-install
     "helm.sh/hook-delete-policy": "before-hook-creation"

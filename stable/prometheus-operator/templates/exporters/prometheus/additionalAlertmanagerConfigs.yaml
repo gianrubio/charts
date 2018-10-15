@@ -5,9 +5,7 @@ metadata:
   name: {{ template "prometheus-operator.fullname" . }}-prometheus-am-confg
   labels:  
     app: {{ template "prometheus-operator.name" . }}-prometheus-am-confg
-    chart: {{ template "prometheus-operator.chartref" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 4 }}
 data:
   additional-alertmanager-configs.yaml: {{ toYaml .Values.prometheus.prometheusSpec.additionalAlertManagerConfigs | b64enc | quote }}
 {{- end }}

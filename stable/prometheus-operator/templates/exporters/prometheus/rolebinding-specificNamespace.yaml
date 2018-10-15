@@ -8,9 +8,7 @@ items:
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     labels:  
       app: {{ template "prometheus-operator.name" . }}-prometheus
-      chart: {{ template "prometheus-operator.chartref" . }}
-      release: {{ .Release.Name | quote }}
-      heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 6 }}
     namespace: default
   roleRef:
     apiGroup: rbac.authorization.k8s.io
@@ -20,15 +18,14 @@ items:
   - kind: ServiceAccount
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     namespace: {{ .Release.Namespace }}
+
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
   metadata:
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     labels:  
       app: {{ template "prometheus-operator.name" . }}-prometheus
-      chart: {{ template "prometheus-operator.chartref" . }}
-      release: {{ .Release.Name | quote }}
-      heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 6 }}
     namespace: kube-system
   roleRef:
     apiGroup: rbac.authorization.k8s.io
@@ -38,15 +35,14 @@ items:
   - kind: ServiceAccount
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     namespace: {{ .Release.Namespace }}
+
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
   metadata:
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     labels:  
       app: {{ template "prometheus-operator.name" . }}-prometheus
-      chart: {{ template "prometheus-operator.chartref" . }}
-      release: {{ .Release.Name | quote }}
-      heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 6 }}
     namespace: {{ .Release.Namespace }}
   roleRef:
     apiGroup: rbac.authorization.k8s.io

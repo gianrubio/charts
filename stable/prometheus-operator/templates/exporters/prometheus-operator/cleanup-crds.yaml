@@ -10,18 +10,14 @@ metadata:
     "helm.sh/hook-delete-policy": hook-succeeded
   labels:
     app: {{ template "prometheus-operator.name" . }}-operator
-    chart: {{ template "prometheus-operator.chartref" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   template:
     metadata:
       name: {{ template "prometheus-operator.fullname" . }}-operator-cleanup
       labels:
         app: {{ template "prometheus-operator.name" . }}-operator
-        chart: {{ template "prometheus-operator.chartref" . }}
-        release: {{ .Release.Name | quote }}
-        heritage: {{ .Release.Service | quote }}
+{{ include "prometheus-operator.labels" . | indent 8 }}
     spec:
     {{- if .Values.global.rbac.create }}
       serviceAccountName: {{ template "prometheus-operator.fullname" . }}-operator
