@@ -20,7 +20,7 @@ spec:
 {{ include "prometheus-operator.labels" . | indent 8 }}
     spec:
     {{- if .Values.global.rbac.create }}
-      serviceAccountName: {{ template "prometheus-operator.fullname" . }}-operator
+      serviceAccountName: {{ template "prometheus-operator.operator.serviceAccountName" . }}
     {{- end }}
       containers:
         - name: kubectl

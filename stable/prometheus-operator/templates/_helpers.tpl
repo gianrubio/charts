@@ -13,7 +13,25 @@ which gives 16 charachters for a release name without it being trimmed
 */}}
 {{- define "prometheus-operator.fullname" -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 35 | trimSuffix "-" -}}
+{{- end }}
+
+{{/* Fullname suffixed with operator */}}
+{{- define "prometheus-operator.operator.fullname" -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- printf "%s-%s-operator" .Release.Name $name -}}
+{{- end }}
+
+{{/* Fullname suffixed with prometheus */}}
+{{- define "prometheus-operator.prometheus.fullname" -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- printf "%s-%s-prometheus" .Release.Name $name -}}
+{{- end }}
+
+{{/* Fullname suffixed with alertmanager */}}
+{{- define "prometheus-operator.alertmanager.fullname" -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- printf "%s-%s-alertmanager" .Release.Name $name -}}
 {{- end }}
 
 {{/* Create chart name and version as used by the chart label. */}}
@@ -30,6 +48,33 @@ heritage: {{ .Release.Service | quote }}
 {{ toYaml .Values.commonLabels }}
 {{- end }}
 {{- end }}
+
+{{/* Create the name of prometheus-operator service account to use */}}
+{{- define "prometheus-operator.operator.serviceAccountName" -}}
+{{- if .Values.prometheusOperator.serviceAccount.create -}}
+    {{ default (include "prometheus-operator.operator.fullname" .) .Values.prometheusOperator.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.prometheusOperator.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{/* Create the name of prometheus service account to use */}}
+{{- define "prometheus-operator.prometheus.serviceAccountName" -}}
+{{- if .Values.prometheus.serviceAccount.create -}}
+    {{ default (include "prometheus-operator.prometheus.fullname" .) .Values.prometheus.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.prometheus.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{/* Create the name of alertmanager service account to use */}}
+{{- define "prometheus-operator.alertmanager.serviceAccountName" -}}
+{{- if .Values.alertmanager.serviceAccount.create -}}
+    {{ default (include "prometheus-operator.alertmanager.fullname" .) .Values.alertmanager.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.alertmanager.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
 
 {{/* Workaround for https://github.com/helm/helm/issues/3117 */}}
 {{- define "prometheus-operator.rangeskipempty" -}}

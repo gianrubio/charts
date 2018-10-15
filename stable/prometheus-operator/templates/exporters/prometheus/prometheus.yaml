@@ -16,7 +16,10 @@ spec:
         name: {{ template "prometheus-operator.fullname" . }}-alertmanager
         port: web
 {{- end }}
-  baseImage: "{{ .Values.prometheus.prometheusSpec.image.repository }}"
+{{- if .Values.prometheus.prometheusSpec.image }}
+  baseImage: {{ .Values.prometheus.prometheusSpec.image.repository }}
+  version: {{ .Values.prometheus.prometheusSpec.image.tag }}
+{{- end }}
 {{- if .Values.prometheus.prometheusSpec.externalLabels }}
   externalLabels:
 {{ toYaml .Values.prometheus.prometheusSpec.externalLabels | indent 4}}
@@ -49,7 +52,7 @@ spec:
 {{ toYaml .Values.prometheus.prometheusSpec.secrets | indent 4 }}
 {{- end }}
 {{- if .Values.global.rbac.create }}
-  serviceAccountName: {{ template "prometheus-operator.fullname" . }}-prometheus
+  serviceAccountName: {{ template "prometheus-operator.prometheus.serviceAccountName" . }}
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.serviceMonitorSelector }}
   serviceMonitorSelector:
@@ -92,7 +95,6 @@ spec:
   storage:
 {{ toYaml .Values.prometheus.prometheusSpec.storageSpec | indent 4 }}
 {{- end }}
-  version: "{{ .Values.prometheus.prometheusSpec.image.tag }}"
   {{- if .Values.prometheus.prometheusSpec.podMetadata }}
   podMetadata:
 {{ toYaml .Values.prometheus.prometheusSpec.podMetadata | indent 4 }}

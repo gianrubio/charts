@@ -7,11 +7,13 @@ metadata:
     app: {{ template "prometheus-operator.name" . }}-alertmanager
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
+{{- if .Values.alertmanager.alertmanagerSpec.image }}
   baseImage: {{ .Values.alertmanager.alertmanagerSpec.image.repository }}
   version: {{ .Values.alertmanager.alertmanagerSpec.image.tag }}
+{{- end }}
   replicas: {{ .Values.alertmanager.alertmanagerSpec.replicas }}
   listenLocal: {{ .Values.alertmanager.alertmanagerSpec.listenLocal }}
-  serviceAccountName: {{ template "prometheus-operator.fullname" . }}-alertmanager
+  serviceAccountName: {{ template "prometheus-operator.alertmanager.serviceAccountName" . }}
 {{- if .Values.alertmanager.alertmanagerSpec.externalUrl }}
   externalUrl: "{{ .Values.alertmanager.alertmanagerSpec.externalUrl }}"
 {{- end }}

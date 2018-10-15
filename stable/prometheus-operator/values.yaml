@@ -32,6 +32,13 @@ alertmanager:
   ##
   deploy: true
 
+  ## Service account for Alertmanager to use.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ##
+  serviceAccount:
+    create: true
+    name: ""
+
   ## Alertmanager configuration directives
   ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
   ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
@@ -120,12 +127,11 @@ alertmanager:
     ##
     podMetadata: {}
     
-    ## Image of Alertmanager.
-    ## Defaults to one set by Prometheus Operator 
+    ## Image of Alertmanager
     ##
-    image: {}
-    #  repository: quay.io/coreos/prometheus
-    #  tag: v2.4.3
+    image:
+      repository: quay.io/prometheus/alertmanager
+      tag: v0.15.2
 
     ## Secrets is a list of Secrets in the same namespace as the Alertmanager object, which shall be mounted into the 
     ## Alertmanager Pods. The Secrets are mounted into /etc/alertmanager/secrets/.
@@ -429,6 +435,13 @@ prometheus-node-exporter:
 prometheusOperator:
   deploy: true
   
+  ## Service account for Alertmanager to use.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ##
+  serviceAccount:
+    create: true
+    name: ""
+
   ## Deploy CRDs used by Prometheus Operator.
   ##
   createCustomResource: true  
@@ -482,6 +495,13 @@ prometheus:
   
   deploy: true
   
+  ## Service account for Prometheuses to use.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ##
+  serviceAccount:
+    create: true
+    name: ""
+
   ingress:
     enabled: false
     annotations: {}
@@ -523,9 +543,11 @@ prometheus:
     listenLocal: false	
 
     ## Image of Prometheus.
-    ## Defaults to one set by Prometheus Operator 
     ##
-    image: {}
+    image:
+      repository: quay.io/prometheus/prometheus
+      tag: v2.4.3
+
     #  repository: quay.io/coreos/prometheus
     #  tag: v2.4.3
     
