@@ -398,6 +398,45 @@ kubeDns:
   service:
     selector:
       k8s-app: kube-dns
+## Component scraping etcd
+##
+kubeEtcd:
+  deploy: true
+
+  ## If your etcd is not deployed as a pod, specify IPs it can be found on
+  ##
+  endpoints: []
+    # - 10.141.4.22
+    # - 10.141.4.23
+    # - 10.141.4.24
+  
+  ## Etcd service. If using kubeEtcd.endpoints only the port and targetPort are used
+  ## 
+  service:
+    port: 4001
+    targetPort: 4001
+    selector:
+      k8s-app: etcd-server
+  
+  ## Configure secure access to the etcd cluster by loading a secret into prometheus and
+  ## specifying security configuration below. For example, with a secret named etcd-client-cert
+  ##
+  ## serviceMonitor:
+  ##   scheme: https
+  ##   insecureSkipVerify: false
+  ##   serverName: localhost
+  ##   caFile: /etc/prometheus/secrets/etcd-client-cert/etcd-ca
+  ##   certFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client
+  ##   keyFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client-key
+  ##
+  serviceMonitor:
+    scheme: http
+    insecureSkipVerify: false
+    serverName: ""
+    caFile: /etc/prometheus/secrets/etcd-client-cert/etcd-ca
+    certFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client
+    keyFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client-key
+    
 
 ## Component scraping kube scheduler
 ##

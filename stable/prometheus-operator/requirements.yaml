@@ -1,11 +1,5 @@
 dependencies:
 
-  # - name: exporter-kube-etcd
-  #   version: 0.1.15
-  #   #e2e-repository: file://../exporter-kube-etcd
-  #   repository: https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/
-  #   condition: deployKubeEtcd
-
   - name: kube-state-metrics
     version: 0.8.2
     repository: https://kubernetes-charts.storage.googleapis.com/
