@@ -1,37 +1,34 @@
 {{/* vim: set filetype=mustache: */}}
-{{/* Expand the name of the chart. */}}
+{{/* Expand the name of the chart. This is suffixed with -alertmanager, which means subtract 13 from longest 63 available */}}
 {{- define "prometheus-operator.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 50 | trimSuffix "-" -}}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
-The longest name that gets created adds and extra 28 charachters, so trunc should be 63-28=35, 
-which gives 16 charachters for a release name without it being trimmed
+The components in this chart create additional resources that expand the longest created name strings.
+The longest name that gets created adds and extra 37 charachters, so truncation should be 63-35=26.
 */}}
 {{- define "prometheus-operator.fullname" -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 35 | trimSuffix "-" -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 26 | trimSuffix "-" -}}
 {{- end }}
 
 {{/* Fullname suffixed with operator */}}
 {{- define "prometheus-operator.operator.fullname" -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s-operator" .Release.Name $name -}}
+{{- printf "%s-operator" (include "prometheus-operator.fullname" .) -}}
 {{- end }}
 
 {{/* Fullname suffixed with prometheus */}}
 {{- define "prometheus-operator.prometheus.fullname" -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s-prometheus" .Release.Name $name -}}
+{{- printf "%s-prometheus" (include "prometheus-operator.fullname" .) -}}
 {{- end }}
 
 {{/* Fullname suffixed with alertmanager */}}
 {{- define "prometheus-operator.alertmanager.fullname" -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s-alertmanager" .Release.Name $name -}}
+{{- printf "%s-alertmanager" (include "prometheus-operator.fullname" .) -}}
 {{- end }}
 
 {{/* Create chart name and version as used by the chart label. */}}
