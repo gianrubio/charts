@@ -17,6 +17,9 @@ spec:
       labels: 
         app: {{ template "prometheus-operator.name" . }}-operator
 {{ include "prometheus-operator.labels" . | indent 8 }}
+{{- if .Values.prometheusOperator.podLabels }}
+{{ toYaml .Values.prometheusOperator.podLabels | indent 8 }}
+{{- end }}
     spec:
       containers:
         - name: {{ template "prometheus-operator.name" . }}

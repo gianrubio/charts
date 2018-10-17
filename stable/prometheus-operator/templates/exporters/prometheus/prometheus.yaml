@@ -58,7 +58,9 @@ spec:
   serviceMonitorSelector:
 {{ toYaml .Values.prometheus.prometheusSpec.serviceMonitorSelector | indent 4 }}
 {{ else}}
-  serviceMonitorSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      release: {{ .Release.Name | quote }}
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.serviceMonitorNamespaceSelector }}
   serviceMonitorNamespaceSelector:
