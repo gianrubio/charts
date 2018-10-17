@@ -12,10 +12,20 @@ metadata:
     "helm.sh/hook": crd-install
     "helm.sh/hook-delete-policy": "before-hook-creation"
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .metadata.creationTimestamp
+    description: |-
+      CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.
+
+      Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+    name: Age
+    type: date
   group: monitoring.coreos.com
   names:
     kind: ServiceMonitor
+    listKind: ServiceMonitorList
     plural: servicemonitors
+    singular: servicemonitor
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -144,6 +154,51 @@ spec:
                     description: ProxyURL eg http://proxyserver:2195 Directs scrapes
                       to proxy through this endpoint.
                     type: string
+                  relabelings:
+                    description: 'RelabelConfigs to apply to samples before ingestion.
+                      More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#<relabel_config>'
+                    items:
+                      description: 'RelabelConfig allows dynamic rewriting of the
+                        label set, being applied to samples before ingestion. It defines
+                        `<metric_relabel_configs>`-section of Prometheus configuration.
+                        More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs'
+                      properties:
+                        action:
+                          description: Action to perform based on regex matching.
+                            Default is 'replace'
+                          type: string
+                        modulus:
+                          description: Modulus to take of the hash of the source label
+                            values.
+                          format: int64
+                          type: integer
+                        regex:
+                          description: Regular expression against which the extracted
+                            value is matched. defailt is '(.*)'
+                          type: string
+                        replacement:
+                          description: Replacement value against which a regex replace
+                            is performed if the regular expression matches. Regex
+                            capture groups are available. Default is '$1'
+                          type: string
+                        separator:
+                          description: Separator placed between concatenated source
+                            label values. default is ';'.
+                          type: string
+                        sourceLabels:
+                          description: The source labels select values from existing
+                            labels. Their content is concatenated using the configured
+                            separator and matched against the configured regular expression
+                            for the replace, keep, and drop actions.
+                          items:
+                            type: string
+                          type: array
+                        targetLabel:
+                          description: Label to which the resulting value is written
+                            in a replace action. It is mandatory for replace actions.
+                            Regex capture groups are available.
+                          type: string
+                    type: array
                   scheme:
                     description: HTTP scheme to use for scraping.
                     type: string
@@ -177,7 +232,7 @@ spec:
               description: The label to use to retrieve the job name from.
               type: string
             namespaceSelector:
-              description: A selector for selecting namespaces either selecting all
+              description: NamespaceSelector is a selector for selecting either all
                 namespaces or a list of namespaces.
               properties:
                 any:
@@ -189,6 +244,17 @@ spec:
                   items:
                     type: string
                   type: array
+            podTargetLabels:
+              description: PodTargetLabels transfers labels on the Kubernetes Pod
+                onto the target.
+              items:
+                type: string
+              type: array
+            sampleLimit:
+              description: SampleLimit defines per-scrape limit on number of scraped
+                samples that will be accepted.
+              format: int64
+              type: integer
             selector:
               description: A label selector is a label query over a set of resources.
                 The result of matchLabels and matchExpressions are ANDed. An empty

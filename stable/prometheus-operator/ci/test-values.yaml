@@ -497,7 +497,7 @@ prometheusOperator:
 
   ## Attempt to clean up CRDs created by Prometheus Operator.
   ##
-  cleanupCustomResource: false
+  cleanupCustomResource: true
 
   ## If true, the operator will create and maintain a service for scraping kubelets
   ## ref: https://github.com/coreos/prometheus-operator/blob/master/helm/prometheus-operator/README.md
