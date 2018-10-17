@@ -1091,7 +1091,7 @@ spec:
         message: Errors while reconciling Alertmanager in {{`{{ $labels.namespace }}`}}
           Namespace.
       expr: |
-        rate(prometheus_operator_alertmanager_reconcile_errors_total{job="{{ $operatorJob }}"}[5m]) > 0.1
+        rate(prometheus_operator_reconcile_errors_total{job="{{ $operatorJob }}",controller="alertmanager"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
@@ -1099,7 +1099,7 @@ spec:
       annotations:
         message: Errors while reconciling Prometheus in {{`{{ $labels.namespace }}`}} Namespace.
       expr: |
-        rate(prometheus_operator_prometheus_reconcile_errors_total{job="{{ $operatorJob }}"}[5m]) > 0.1
+        rate(prometheus_operator_reconcile_errors_total{job="{{ $operatorJob }}",controller="prometheus"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
@@ -1107,7 +1107,7 @@ spec:
       annotations:
         message: Errors while reconciling Prometheus in {{`{{ $labels.namespace }}`}} Namespace.
       expr: |
-        rate(prometheus_operator_node_address_lookup_errors_total{job="{{ $operatorJob }}"}[5m]) > 0.1
+        rate(prometheus_operator_node_address_lookup_errors_total{job="{{ $operatorJob }}",controller="prometheus"}[5m]) > 0.1
       for: 10m
       labels:
         severity: warning
