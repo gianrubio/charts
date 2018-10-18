@@ -12,6 +12,6 @@ roleRef:
   name: {{ template "prometheus-operator.fullname" . }}-operator
 subjects:
 - kind: ServiceAccount
-  name: {{ template "prometheus-operator.fullname" . }}-operator
+  name: {{ template "prometheus-operator.operator.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 {{- end }}

@@ -12,7 +12,7 @@ roleRef:
   name: {{ template "prometheus-operator.fullname" . }}-prometheus-psp
 subjects:
   - kind: ServiceAccount
-    name: {{ template "prometheus-operator.fullname" . }}-prometheus
+    name: {{ template "prometheus-operator.prometheus.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
 

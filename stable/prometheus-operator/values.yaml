@@ -553,6 +553,13 @@ prometheus:
   serviceAccount:
     create: true
     name: ""
+  
+  rbac:
+    ## Create role bindings in the specified namespaces, to allow Prometheus monitoring
+    ## a role binding in the release namespace will always be created.
+    ##
+    roleNamespaces:
+      - kube-system
 
   ## Configure pod disruption budgets for Prometheus
   ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget

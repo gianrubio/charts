@@ -12,6 +12,6 @@ roleRef:
   name: {{ template "prometheus-operator.fullname" . }}-alertmanager
 subjects:
   - kind: ServiceAccount
-    name: {{ template "prometheus-operator.fullname" . }}-alertmanager
+    name: {{ template "prometheus-operator.alertmanager.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
