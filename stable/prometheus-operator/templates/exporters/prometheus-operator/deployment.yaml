@@ -1,5 +1,5 @@
 {{- if .Values.prometheusOperator.deploy }}
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-operator
