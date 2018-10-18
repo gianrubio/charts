@@ -35,7 +35,7 @@ items:
   - kind: ServiceAccount
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     namespace: {{ .Release.Namespace }}
-
+{{- if ne .Release.Namespace "default" }}
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
   metadata:
@@ -52,4 +52,5 @@ items:
   - kind: ServiceAccount
     name: {{ template "prometheus-operator.fullname" . }}-prometheus
     namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
