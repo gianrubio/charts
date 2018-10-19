@@ -25,7 +25,9 @@ spec:
       {{- if .Values.kubeEtcd.serviceMonitor.serverName }}
       serverName: {{ .Values.kubeEtcd.serviceMonitor.serverName }}
       {{- end }}
+      {{- if .Values.kubeEtcd.serviceMonitor.caFile }}
       caFile: {{ .Values.kubeEtcd.serviceMonitor.caFile }}
+      {{- end }}
       {{- if  .Values.kubeEtcd.serviceMonitor.certFile }}
       certFile: {{ .Values.kubeEtcd.serviceMonitor.certFile }}
       {{- end }}

@@ -370,9 +370,9 @@ kubeEtcd:
     scheme: http
     insecureSkipVerify: false
     serverName: ""
-    caFile: /etc/prometheus/secrets/etcd-client-cert/etcd-ca
-    certFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client
-    keyFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client-key
+    caFile: ""
+    certFile: ""
+    keyFile: ""
     
 
 ## Component scraping kube scheduler
