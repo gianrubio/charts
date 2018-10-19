@@ -11,6 +11,6 @@ dependencies:
     condition: nodeexporter.deploy
 
   - name: grafana
-    version: 1.12.0
+    version: 1.17.2
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: grafana.deploy

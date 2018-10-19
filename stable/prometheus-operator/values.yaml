@@ -243,7 +243,6 @@ alertmanager:
 # Using default values from https://github.com/helm/charts/blob/master/stable/grafana/values.yaml
 grafana:
   deploy: true
-  prometheusOperatorServiceName: prometheus-grafana
   adminPassword: prom-operator
 
   ingress:
@@ -275,82 +274,14 @@ grafana:
       # - secretName: prometheus-general-tls
       #   hosts:
       #     - prometheus.example.com
-  
-  dashboardsConfigMaps:
-    grafana-dashboard-k8s-cluster-rsrc-use: grafana-dashboard-k8s-cluster-rsrc-use
-    grafana-dashboard-k8s-node-rsrc-use: grafana-dashboard-k8s-node-rsrc-use
-    grafana-dashboard-k8s-resources-cluster: grafana-dashboard-k8s-resources-cluster
-    grafana-dashboard-k8s-resources-namespace: grafana-dashboard-k8s-resources-namespace
-    grafana-dashboard-k8s-resources-pod: grafana-dashboard-k8s-resources-pod
-    grafana-dashboard-nodes: grafana-dashboard-nodes
-    grafana-dashboard-statefulset: grafana-dashboard-statefulset
-    grafana-dashboard-statefulset: grafana-dashboard-etcd
 
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-      - name: Prometheus
-        type: prometheus
-        # TODO: Create dedicated service so Grafana can read this Prometheus instance
-        #       manipulate this string to create it
-        url: http://prometheus-grafana:9090
-        access: proxy
-        isDefault: true
-
-  dashboardProviders:
-    dashboardproviders.yaml:
-      apiVersion: 1
-      providers:
-      - name: grafana-dashboard-k8s-cluster-rsrc-use
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-k8s-cluster-rsrc-use
-      - name: rafana-dashboard-k8s-node-rsrc-use
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-k8s-node-rsrc-use
-      - name: grafana-dashboard-k8s-resources-cluster
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-k8s-resources-cluster
-      - name: grafana-dashboard-k8s-resources-namespace
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-k8s-resources-namespace
-      - name: grafana-dashboard-k8s-resources-pod
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-k8s-resources-pod
-      - name: grafana-dashboard-nodes
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-nodes
-      - name: grafana-dashboard-statefulset
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-statefulset
-      - name: grafana-dashboard-etcd
-        orgId: 1
-        type: file
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboard-etcd
-
+  sidecar:
+    dashboards:
+      enabled: True
+      label: grafana_dashboard
+    datasources:
+      enabled: True
+      label: grafana_datasource
 
 ## Component scraping the kube api server
 ##
