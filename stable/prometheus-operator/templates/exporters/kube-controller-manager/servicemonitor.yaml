@@ -1,9 +1,9 @@
-{{- if .Values.kubeControllerManager.deploy }}
+{{- if .Values.kubeControllerManager.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-kube-controller-manager
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-kube-controller-manager
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

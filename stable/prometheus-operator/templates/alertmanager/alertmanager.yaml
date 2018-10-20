@@ -1,9 +1,9 @@
-{{- if .Values.alertmanager.deploy }}
+{{- if .Values.alertmanager.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-alertmanager
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-alertmanager
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
@@ -42,7 +42,7 @@ spec:
 {{- if .Values.alertmanager.alertmanagerSpec.securityContext }}
   securityContext:
 {{ toYaml .Values.alertmanager.alertmanagerSpec.securityContext | indent 4 }}
-{{- end }} 
+{{- end }}
 {{- if .Values.alertmanager.alertmanagerSpec.storage }}
   storage:
 {{ toYaml .Values.alertmanager.alertmanagerSpec.storage | indent 4 }}

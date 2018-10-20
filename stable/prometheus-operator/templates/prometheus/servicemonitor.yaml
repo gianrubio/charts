@@ -1,12 +1,12 @@
-{{- if and .Values.prometheus.deploy .Values.prometheus.serviceMonitor.selfMonitor }}
+{{- if and .Values.prometheus.enabled .Values.prometheus.serviceMonitor.selfMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-prometheus
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-prometheus
 {{ include "prometheus-operator.labels" . | indent 4 }}
-spec:  
+spec:
   selector:
     matchLabels:
       app: {{ template "prometheus-operator.name" . }}-prometheus

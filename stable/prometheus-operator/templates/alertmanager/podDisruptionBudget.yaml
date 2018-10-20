@@ -1,9 +1,9 @@
-{{- if and .Values.alertmanager.deploy .Values.alertmanager.podDisruptionBudget.enabled }}
+{{- if and .Values.alertmanager.enabled .Values.alertmanager.podDisruptionBudget.enabled }}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-alertmanager
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-alertmanager
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

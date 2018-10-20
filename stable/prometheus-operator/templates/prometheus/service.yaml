@@ -1,9 +1,9 @@
-{{- if .Values.prometheus.deploy }}
+{{- if .Values.prometheus.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-prometheus
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-prometheus
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

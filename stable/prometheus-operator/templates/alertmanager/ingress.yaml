@@ -1,4 +1,4 @@
-{{- if and .Values.alertmanager.deploy .Values.alertmanager.ingress.enabled }}
+{{- if and .Values.alertmanager.enabled .Values.alertmanager.ingress.enabled }}
 {{- $routePrefix := .Values.routePrefix }}
 {{- $serviceName := printf "%s-%s" (include "prometheus-operator.fullname" .) "alertmanager" }}
 apiVersion: extensions/v1beta1

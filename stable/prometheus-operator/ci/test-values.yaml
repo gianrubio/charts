@@ -36,7 +36,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  deploy: true
+  enabled: true
 
   ## Service account for Alertmanager to use.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
@@ -247,7 +247,7 @@ alertmanager:
 ## Using default values from https://github.com/helm/charts/blob/master/stable/grafana/values.yaml
 ##
 grafana:
-  deploy: true
+  enabled: true
 
   ## Deploy default dashboards.
   ##
@@ -296,7 +296,7 @@ grafana:
 ## Component scraping the kube api server
 ##
 kubeApiServer:
-  deploy: true
+  enabled: true
   tlsConfig:
     serverName: kubernetes
     insecureSkipVerify: false
@@ -311,7 +311,7 @@ kubeApiServer:
 ## Component scraping the kubelet and kubelet-hosted cAdvisor
 ##
 kubelet:
-  deploy: true
+  enabled: true
   namespace: kube-system
 
   serviceMonitor:
@@ -323,7 +323,7 @@ kubelet:
 ## Component scraping the kube controller manager
 ##
 kubeControllerManager:
-  deploy: true
+  enabled: true
   service:
     port: 10252
     targetPort: 10252
@@ -332,7 +332,7 @@ kubeControllerManager:
 ## Component scraping coreDns. Use either this or kubeDns
 ##
 coreDns:
-  deploy: true
+  enabled: true
   service:
     port: 9153
     targetPort: 9153
@@ -342,14 +342,14 @@ coreDns:
 ## Component scraping kubeDns. Use either this or coreDns
 ##
 kubeDns:
-  deploy: false
+  enabled: false
   service:
     selector:
       k8s-app: kube-dns
 ## Component scraping etcd
 ##
 kubeEtcd:
-  deploy: true
+  enabled: true
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
@@ -389,7 +389,7 @@ kubeEtcd:
 ## Component scraping kube scheduler
 ##
 kubeScheduler:
-  deploy: true
+  enabled: true
   service:
     port: 10251
     targetPort: 10251
@@ -399,7 +399,7 @@ kubeScheduler:
 ## Component scraping kube state metrics
 ##
 kubeStateMetrics:
-  deploy: true
+  enabled: true
 
 ## Configuration for kube-state-metrics subchart
 ##
@@ -410,7 +410,7 @@ kube-state-metrics:
 ## Deploy node exporter as a daemonset to all nodes
 ##
 nodeExporter:
-  deploy: true
+  enabled: true
 
   ## Use the value configured in prometheus-node-exporter.podLabels
   ##
@@ -430,7 +430,7 @@ prometheus-node-exporter:
 ## Manages Prometheus and Alertmanager components
 ##
 prometheusOperator:
-  deploy: true
+  enabled: true
 
   ## Service account for Alertmanager to use.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
@@ -530,7 +530,7 @@ prometheusOperator:
 ##
 prometheus:
 
-  deploy: true
+  enabled: true
 
   ## Service account for Prometheuses to use.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/

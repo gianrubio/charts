@@ -1,9 +1,9 @@
-{{- if and .Values.alertmanager.deploy .Values.alertmanager.serviceMonitor.selfMonitor }}
+{{- if and .Values.alertmanager.enabled .Values.alertmanager.serviceMonitor.selfMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-alertmanager
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-alertmanager
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

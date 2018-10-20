@@ -1,12 +1,12 @@
-{{- if .Values.kubeControllerManager.deploy }}
+{{- if .Values.kubeControllerManager.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-kube-controller-manager
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-kube-controller-manager
     jobLabel: kube-controller-manager
-{{ include "prometheus-operator.labels" . | indent 4 }} 
+{{ include "prometheus-operator.labels" . | indent 4 }}
   namespace: kube-system
 spec:
   clusterIP: None

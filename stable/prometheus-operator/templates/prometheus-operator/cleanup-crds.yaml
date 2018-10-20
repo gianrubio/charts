@@ -1,4 +1,4 @@
-{{- if and .Values.prometheusOperator.deploy .Values.prometheusOperator.cleanupCustomResource }}
+{{- if and .Values.prometheusOperator.enabled .Values.prometheusOperator.cleanupCustomResource }}
 apiVersion: batch/v1
 kind: Job
 metadata:

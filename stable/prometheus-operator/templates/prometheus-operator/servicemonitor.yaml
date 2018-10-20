@@ -1,4 +1,4 @@
-{{- if and .Values.prometheusOperator.deploy .Values.prometheusOperator.serviceMonitor.selfMonitor }}
+{{- if and .Values.prometheusOperator.enabled .Values.prometheusOperator.serviceMonitor.selfMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

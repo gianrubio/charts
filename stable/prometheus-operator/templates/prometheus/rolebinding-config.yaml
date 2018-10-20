@@ -1,9 +1,9 @@
-{{- if .Values.prometheus.deploy }}
+{{- if .Values.prometheus.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-prometheus-config
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-prometheus
 {{ include "prometheus-operator.labels" . | indent 4 }}
 roleRef:

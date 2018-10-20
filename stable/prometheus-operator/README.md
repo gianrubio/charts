@@ -63,7 +63,7 @@ The following tables lists the configurable parameters of the prometheus-operato
 ### Prometheus Operator
 | Parameter | Description | Default |
 | ----- | ----------- | ------ |
-| `prometheusOperator.deploy` | Deploy Prometheus Operator. Only one of these should be deployed into the cluster | true |
+| `prometheusOperator.enabled` | Deploy Prometheus Operator. Only one of these should be deployed into the cluster | true |
 | `prometheusOperator.serviceAccount` | Create a serviceaccount for the operator | true |
 | `prometheusOperator.name` | Operator serviceAccount name | "" |
 | `prometheusOperator.createCustomResource` | Create CRDs. Required if deploying anyting besides the operator itself as part of the release. The operator will create / update these on startup. If your Helm version < 2.10 you will have to either create the CRDs first or deploy the operator first, then the rest of the resources | true |
@@ -90,7 +90,7 @@ The following tables lists the configurable parameters of the prometheus-operato
 ### Prometheus
 | Parameter | Description | Default |
 | ----- | ----------- | ------ |
-| `prometheus.deploy` | Deploy prometheus | `true` |
+| `prometheus.enabled` | Deploy prometheus | `true` |
 | `prometheus.serviceMonitor.selfMonitor` | Create a `serviceMonitor` to automatically monitor the prometheus instance | true |
 | `prometheus.serviceAccount.create` | Create a default serviceaccount for prometheus to use | `true` |
 | `prometheus.serviceAccount.name` | Name for prometheus serviceaccount | "" |
@@ -141,7 +141,7 @@ The following tables lists the configurable parameters of the prometheus-operato
 ### Alertmanager
 | Parameter | Description | Default |
 | ----- | ----------- | ------ |
-| `alertmanager.deploy` | Deploy alertmanager | `true` |
+| `alertmanager.enabled` | Deploy alertmanager | `true` |
 | `alertmanager.serviceAccount.create` | Create a `serviceAccount` for alertmanager | `true` |
 | `alertmanager.serviceAccount.name` | Name for Alertmanager service account | "" |
 | `alertmanager.podDisruptionBudget.enabled` | If true, create a pod disruption budget for Alertmanager pods. The created resource cannot be modified once created - it must be deleted to perform a change | `true` |
@@ -177,7 +177,7 @@ The following tables lists the configurable parameters of the prometheus-operato
 ### Grafana
 | Parameter | Description | Default |
 | ----- | ----------- | ------ |
-| `grafana.deploy` | If true, deploy the grafana sub-chart | `true` |
+| `grafana.enabled` | If true, deploy the grafana sub-chart | `true` |
 | `grafana.adminPassword` | Admin password to log into the grafana UI | "prom-operator" |
 | `grafana.defaultDashboardsEnabled` | Deploy default dashboards. These are loaded using the sidecar | `true` |
 | `grafana.ingress.enabled` | Enables Ingress for Grafana | `false` |
@@ -193,25 +193,25 @@ The following tables lists the configurable parameters of the prometheus-operato
 ### Exporters
 | Parameter | Description | Default |
 | ----- | ----------- | ------ |
-| `kubeApiServer.deploy` | Deploy `serviceMonitor` to scrape the Kubernetes API server | true |
+| `kubeApiServer.enabled` | Deploy `serviceMonitor` to scrape the Kubernetes API server | true |
 | `kubeApiServer.tlsConfig.serverName` | Name of the server to use when validating TLS certificate | "kubernetes" |
 | `kubeApiServer.tlsConfig.insecureSkipVerify` | Skip TLS certificate validation when scraping | `false` |
 | `kubeApiServer.serviceMonitor.jobLabel` | The name of the label on the target service to use as the job name in prometheus | "component" |
 | `kubeApiServer.serviceMonitor.selector` | The service selector | `{"matchLabels":{"component":"apiserver","provider":"kubernetes"}}`
-| `kubelet.deploy` | Deploy servicemonitor to scrape the kubelet service. See also `prometheusOperator.kubeletService` | true |
+| `kubelet.enabled` | Deploy servicemonitor to scrape the kubelet service. See also `prometheusOperator.kubeletService` | true |
 | `kubelet.namespace` | Namespace where the kubelet is deployed. See also `prometheusOperator.kubeletService.namespace` | "kube-system" |
 | `kubelet.serviceMonitor.https` | Enable scraping of the kubelet over HTTPS. For more information, see https://github.com/coreos/prometheus-operator/issues/926 | false |
-| `kubeControllerManager.deploy` | Deploy a `service` and `serviceMonitor` to scrape the Kubernetes controller-manager | true |
+| `kubeControllerManager.enabled` | Deploy a `service` and `serviceMonitor` to scrape the Kubernetes controller-manager | true |
 | `kubeControllermanager.service.port` | Controller-manager port for the service runs on | 10252 |
 | `kubeControllermanager.service.targetPort` | Controller-manager targetPort for the service runs on | 10252 |
 | `kubeControllermanager.service.targetPort.selector` | Controller-manager service selector | `{"k8s-app" : "kube-controller-manager" }`
-| `coreDns.deploy` | Deploy coreDns scraping components. Use either this or kubeDns | true |
+| `coreDns.enabled` | Deploy coreDns scraping components. Use either this or kubeDns | true |
 | `coreDns.service.port` | CoreDns port | 9153 |
 | `coreDns.service.targetPort` | CoreDns targetPort | 9153 |
 | `coreDns.service.selector` | CoreDns service selector | `{"k8s-app" : "coredns" }`
-| `kubeDns.deploy` | Deploy kubeDns scraping compoents. Use either this or coreDns| `false` |
+| `kubeDns.enabled` | Deploy kubeDns scraping compoents. Use either this or coreDns| `false` |
 | `kubeDns.service.selector` | CoreDns service selector | `{"k8s-app" : "kube-dns" }` |
-| `kubeEtcd.deploy` | Deploy components to scrape etcd | `true` |
+| `kubeEtcd.enabled` | Deploy components to scrape etcd | `true` |
 | `kubeEtcd.endpoints` | Endpoints where etcd runs. Provide this if running etcd outside the cluster | `[]` |
 | `kubeEtcd.service.port` | Etct port | 4001 |
 | `kubeEtcd.service.targetPort` | Etct targetPort | 4001 |
@@ -222,9 +222,9 @@ The following tables lists the configurable parameters of the prometheus-operato
 | `kubeEtcd.servicemonitor.caFile` | Certificate authority file to use when connecting to etcd. See `prometheus.prometheusSpec.secrets` | "" |
 | `kubeEtcd.servicemonitor.certFile` | Client certificate file to use when connecting to etcd. See `prometheus.prometheusSpec.secrets` | "" |
 | `kubeEtcd.servicemonitor.keyFile` | Client key file to use when connecting to etcd.  See `prometheus.prometheusSpec.secrets` | "" |
-| `kubeStateMetrics.deploy` | Deploy the `kube-state-metrics` chart and configure a servicemonitor to scrape | true |
+| `kubeStateMetrics.enabled` | Deploy the `kube-state-metrics` chart and configure a servicemonitor to scrape | true |
 | `kube-state-metrics.rbac.create` | Create RBAC components in kube-state-metrics. See `global.rbac.create` | true |
-| `nodeExporter.deploy` | Deploy the `prometheus-node-exporter` and scrape it | true |
+| `nodeExporter.enabled` | Deploy the `prometheus-node-exporter` and scrape it | true |
 | `nodeExporter.jobLabel` | The name of the label on the target service to use as the job name in prometheus. See `prometheus-node-exporter.podLabels.jobLabel=node-exporter` default | "jobLabel" |
 | `prometheus-node-exporter.podLabels` | Additional labels for pods in the DaemonSet | `{"jobLabel":"node-exporter"}` |
 | `prometheus-node-exporter.extraArgs` | Additional arguments for the node exporter container | `["--collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)", "--collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$"]` |
@@ -236,10 +236,10 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 $ helm install --name my-release incubator/prometheus-operator --set sendAnalytics=true
 ```
 
-Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
+Alternatively, one or more YAML files that specify the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install --name my-release incubator/prometheus-operator -f values.yaml
+$ helm install --name my-release incubator/prometheus-operator -f values1.yaml,values2.yaml
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)

@@ -1,9 +1,9 @@
-{{- if .Values.kubeDns.deploy }}
+{{- if .Values.kubeDns.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-kube-dns
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-kube-dns
     jobLabel: kube-dns
 {{ include "prometheus-operator.labels" . | indent 4 }}

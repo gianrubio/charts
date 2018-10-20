@@ -1,4 +1,4 @@
-{{- if and .Values.grafana.deploy .Values.grafana.defaultDashboardsEnabled }}
+{{- if and .Values.grafana.enabled .Values.grafana.defaultDashboardsEnabled }}
 apiVersion: v1
 kind: ConfigMapList
 items:

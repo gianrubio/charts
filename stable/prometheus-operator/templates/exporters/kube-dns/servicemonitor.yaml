@@ -1,9 +1,9 @@
-{{- if .Values.kubeDns.deploy }}
+{{- if .Values.kubeDns.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-kube-dns
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-kube-dns
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

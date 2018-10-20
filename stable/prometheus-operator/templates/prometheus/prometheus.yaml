@@ -1,4 +1,4 @@
-{{- if .Values.prometheus.deploy }}
+{{- if .Values.prometheus.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
