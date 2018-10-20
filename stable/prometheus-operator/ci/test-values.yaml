@@ -2,15 +2,19 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## Provide a name in place of prometheus-operator
+##
+nameOverride: ""
+
 ## Labels to apply to all resources
 ##
 commonLabels: {}
-  # scmhash: abc123
-  # myLabel: aakkmd
+# scmhash: abc123
+# myLabel: aakkmd
 
-## Create prometheus rules resource
+## Create default rules for monitoring the cluster
 ##
-rules:
+defaultRules:
   create: true
 
 ##
@@ -20,11 +24,13 @@ global:
     pspEnabled: true
 
   ## Reference to one or more secrets to be used when pulling images
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
   imagePullSecrets: []
-   # - name: "image-pull-secret"
+  # - name: "image-pull-secret"
 
 ## Configuration for alertmanager
+## ref: https://prometheus.io/docs/alerting/alertmanager/
 ##
 alertmanager:
 
@@ -69,7 +75,7 @@ alertmanager:
     receivers:
     - name: 'null'
 
-  ## Alertmanager template files to include
+  ## Alertmanager template files to format alerts
   ## ref: https://prometheus.io/docs/alerting/notifications/
   ##      https://prometheus.io/docs/alerting/notification_examples/
   ##
@@ -107,9 +113,9 @@ alertmanager:
     ## Secret must be manually created in the namespace
     ##
     tls: []
-      # - secretName: alertmanager-general-tls
-      #   hosts:
-      #     - alertmanager.example.com
+    # - secretName: alertmanager-general-tls
+    #   hosts:
+    #   - alertmanager.example.com
 
   ## Configuration for Alertmanager service
   ##
@@ -132,8 +138,8 @@ alertmanager:
   ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#alertmanagerspec
   ##
   alertmanagerSpec:
-    ## 	Standard object’s metadata. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#metadata
-    ## Metadata Labels and Annotations gets propagated to the prometheus pods.
+    ## Standard object’s metadata. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#metadata
+    ## Metadata Labels and Annotations gets propagated to the Alertmanager pods.
     ##
     podMetadata: {}
 
@@ -164,14 +170,14 @@ alertmanager:
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
     ##
     storage: {}
-      #  volumeClaimTemplate:
-      #    spec:
-      #      storageClassName: gluster
-      #      accessModes: ["ReadWriteOnce"]
-      #      resources:
-      #        requests:
-      #          storage: 50Gi
-      #    selector: {}
+    # volumeClaimTemplate:
+    #   spec:
+    #     storageClassName: gluster
+    #     accessModes: ["ReadWriteOnce"]
+    #     resources:
+    #       requests:
+    #         storage: 50Gi
+    #   selector: {}
 
 
     ## 	The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name.	string	false
@@ -187,7 +193,7 @@ alertmanager:
     ##
     paused: false
 
-    ## 	Define which Nodes the Pods are scheduled on.
+    ## Define which Nodes the Pods are scheduled on.
     ## ref: https://kubernetes.io/docs/user-guide/node-selection/
     ##
     nodeSelector: []
@@ -196,8 +202,8 @@ alertmanager:
     ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
     ##
     resources:
-      # requests:
-      #   memory: 400Mi
+    # requests:
+    #   memory: 400Mi
 
     ## Pod anti-affinity can prevent the scheduler from placing Prometheus replicas on the same node.
     ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
@@ -209,11 +215,11 @@ alertmanager:
     ## If specified, the pod's tolerations.
     ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
     ##
-    tolerations: {}
-      #  - key: "key"
-      #    operator: "Equal"
-      #    value: "value"
-      #    effect: "NoSchedule"
+    tolerations: []
+    # - key: "key"
+    #   operator: "Equal"
+    #   value: "value"
+    #   effect: "NoSchedule"
 
     ## SecurityContext holds pod-level security attributes and common container settings.
     ## This defaults to non root user with uid 1000 and gid 2000.	*v1.PodSecurityContext	false
@@ -238,10 +244,15 @@ alertmanager:
     ##
     additionalPeers: []
 
-# Using default values from https://github.com/helm/charts/blob/master/stable/grafana/values.yaml
-#
+## Using default values from https://github.com/helm/charts/blob/master/stable/grafana/values.yaml
+##
 grafana:
   deploy: true
+
+  ## Deploy default dashboards.
+  ##
+  defaultDashboardsEnabled: true
+
   adminPassword: prom-operator
 
   ingress:
@@ -270,9 +281,9 @@ grafana:
     ## Secret must be manually created in the namespace
     ##
     tls: []
-      # - secretName: prometheus-general-tls
-      #   hosts:
-      #     - prometheus.example.com
+    # - secretName: prometheus-general-tls
+    #   hosts:
+    #   - prometheus.example.com
 
   sidecar:
     dashboards:
@@ -302,10 +313,11 @@ kubeApiServer:
 kubelet:
   deploy: true
   namespace: kube-system
-  name: kubelet
 
   serviceMonitor:
-    # https://github.com/coreos/prometheus-operator/issues/926
+    ## Enable scraping the kubelet over https. For requirements to enable this see
+    ## https://github.com/coreos/prometheus-operator/issues/926
+    ##
     https: false
 
 ## Component scraping the kube controller manager
@@ -342,9 +354,9 @@ kubeEtcd:
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
   endpoints: []
-    # - 10.141.4.22
-    # - 10.141.4.23
-    # - 10.141.4.24
+  # - 10.141.4.22
+  # - 10.141.4.23
+  # - 10.141.4.24
 
   ## Etcd service. If using kubeEtcd.endpoints only the port and targetPort are used
   ##
@@ -445,12 +457,48 @@ prometheusOperator:
   kubeletService:
     enabled: true
     namespace: kube-system
-    name: kubelet
 
   ## Create a servicemonitor for the operator
   ##
   serviceMonitor:
     selfMonitor: true
+
+  ## Resource limits & requests
+  ##
+  resources: {}
+  # limits:
+  #   cpu: 200m
+  #   memory: 200Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 100Mi
+
+  ## Define which Nodes the Pods are scheduled on.
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: []
+
+  ## Tolerations for use with node taints
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: {}
+  # - key: "key"
+  #   operator: "Equal"
+  #   value: "value"
+  #   effect: "NoSchedule"
+
+  ## Assign the prometheus operator to run on specific nodes
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  ##
+  affinity: {}
+  # requiredDuringSchedulingIgnoredDuringExecution:
+  #   nodeSelectorTerms:
+  #   - matchExpressions:
+  #     - key: kubernetes.io/e2e-az-name
+  #       operator: In
+  #       values:
+  #       - e2e-az1
+  #       - e2e-az2
 
   ## Prometheus-operator image
   ##
@@ -461,19 +509,19 @@ prometheusOperator:
 
   ## Configmap-reload image to use for reloading configmaps
   ##
-  configmapReload:
+  configmapReloadImage:
     repository: quay.io/coreos/configmap-reload
     tag: v0.0.1
 
   ## Prometheus-config-reloader image to use for config and rule reloading
   ##
-  prometheusConfigReloader:
+  prometheusConfigReloaderImage:
     repository: quay.io/coreos/prometheus-config-reloader
-    tag: v0.23.2
+    tag: v0.24.0
 
   ## Hyperkube image to use when cleaning up
   ##
-  hyperkube:
+  hyperkubeImage:
     repository: gcr.io/google-containers/hyperkube
     tag: v1.12.1
     pullPolicy: IfNotPresent
@@ -572,10 +620,10 @@ prometheus:
     ## Default configuration will connect to the alertmanager deployed as part of this relase
     ##
     alertingEndpoints: []
-    #   - name: ""
-    #     namespace: ""
-    #     port: http
-    #     scheme: http
+    # - name: ""
+    #   namespace: ""
+    #   port: http
+    #   scheme: http
 
     ## External labels to add to any time series or alerts when communicating with external systems
     ##
@@ -585,8 +633,21 @@ prometheus:
     ##
     externalUrl: ""
 
+    ## Define which Nodes the Pods are scheduled on.
+    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+    ##
+    nodeSelector: []
+
+    ## Secrets is a list of Secrets in the same namespace as the Prometheus object, which shall be mounted into the Prometheus Pods.
+    ## The Secrets are mounted into /etc/prometheus/secrets/. Secrets changes after initial creation of a Prometheus object are not
+    ## reflected in the running Pods. To change the secrets mounted into the Prometheus Pods, the object must be deleted and recreated
+    ## with the new list of secrets.
+    ##
+    secrets: []
+
     ## Namespaces to be selected for PrometheusRules discovery.
     ## If unspecified, only the same namespace as the Prometheus object is in is used.
+    ##
     ruleNamespaceSelector: {}
 
     ## Rules CRD selector
@@ -649,9 +710,9 @@ prometheus:
     ## Metadata Labels and Annotations gets propagated to the prometheus pods.
     ##
     podMetadata: {}
-    #  labels:
-    #    app: prometheus
-    #    k8s-app: prometheus
+    # labels:
+    #   app: prometheus
+    #   k8s-app: prometheus
 
     ## Pod anti-affinity can prevent the scheduler from placing Prometheus replicas on the same node.
     ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
@@ -662,8 +723,7 @@ prometheus:
     ## The remote_read spec configuration for Prometheus.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#remotereadspec
     remoteRead: {}
-      # remoteRead:
-      #   - url: http://remote1/read
+    # - url: http://remote1/read
 
     ## The remote_write spec configuriation for Prometheus.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#remotewritespec
@@ -672,6 +732,7 @@ prometheus:
       #   - url: http://remote1/push
 
     ## Resource limits & requests
+    ##
     resources: {}
     # requests:
     #   memory: 400Mi
@@ -697,7 +758,7 @@ prometheus:
     ## Provide additional alertmanager configurations
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
     ##
-    additionalAlertmanagerConfigs: []
+    additionalAlertManagerConfigs: []
 
     ## SecurityContext holds pod-level security attributes and common container settings.
     ## This defaults to non root user with uid 1000 and gid 2000.
@@ -709,6 +770,13 @@ prometheus:
     ##
     priorityClassName: ""
 
+    ## Thanos configuration allows configuring various aspects of a Prometheus server in a Thanos environment.
+    ## This section is experimental, it may change significantly without deprecation notice in any release.
+    ## This is experimental and may change significantly without backward compatibility in any release.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#thanosspec
+    ##
+    thanos: {}
+
     ## Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod.
     ##
     containers: []
@@ -718,8 +786,7 @@ prometheus:
     ##
     additionalScrapeConfigsExternal: false
 
-##
-serviceMonitors: []
+  additionalServiceMonitors: []
   ## Name of the ServiceMonitor to create
   ##
   # - name: ""

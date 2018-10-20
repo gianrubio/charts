@@ -1,4 +1,4 @@
-{{- if and .Values.grafana.deploy .Values.grafana.sidecar.dashboards.enabled }}
+{{- if and .Values.grafana.deploy .Values.grafana.defaultDashboardsEnabled }}
 apiVersion: v1
 kind: ConfigMapList
 items:
@@ -9,7 +9,9 @@ items:
   metadata:
     name: {{ printf "%s-%s" (include "prometheus-operator.fullname" $) $dashboardName | trunc 63 | trimSuffix "-" }}
     labels:
+      {{- if $.Values.grafana.sidecar.dashboards.label }}
       {{ $.Values.grafana.sidecar.dashboards.label }}: "1"
+      {{- end }}
       app: {{ template "prometheus-operator.name" $ }}-grafana
 {{ include "prometheus-operator.labels" $ | indent 6 }}
   data:

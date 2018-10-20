@@ -11,6 +11,9 @@ metadata:
 {{- end }}
   labels:
     app: {{ template "prometheus-operator.name" . }}-alertmanager
+{{- if .Values.alertmanager.ingress.labels }}
+{{ toYaml .Values.alertmanager.ingress.labels | indent 4 }}
+{{- end }}
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
   rules:

@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-prometheus
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-prometheus
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:
@@ -79,7 +79,7 @@ spec:
 {{- if .Values.prometheus.prometheusSpec.securityContext }}
   securityContext:
 {{ toYaml .Values.prometheus.prometheusSpec.securityContext | indent 4 }}
-{{- end }}  
+{{- end }}
 
 {{- if .Values.prometheus.prometheusSpec.ruleNamespaceSelector }}
   ruleNamespaceSelector:
@@ -146,5 +146,9 @@ spec:
 {{- end }}
 {{- if .Values.prometheus.prometheusSpec.priorityClassName }}
   priorityClassName: {{ .Values.prometheus.prometheusSpec.priorityClassName }}
+{{- end }}
+{{- if .Values.prometheus.prometheusSpec.thanos }}
+  thanos:
+{{ toYaml .Values.prometheus.prometheusSpec.thanos | indent 4 }}
 {{- end }}
 {{- end }}
