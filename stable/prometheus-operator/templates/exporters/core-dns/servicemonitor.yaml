@@ -1,9 +1,9 @@
-{{- if .Values.coreDns.deploy }}
+{{- if .Values.coreDns.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-coredns
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-coredns
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

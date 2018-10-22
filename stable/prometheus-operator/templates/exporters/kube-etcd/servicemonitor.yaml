@@ -1,9 +1,9 @@
-{{- if .Values.kubeEtcd.deploy }}
+{{- if .Values.kubeEtcd.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "prometheus-operator.fullname" . }}-kube-etcd
-  labels:  
+  labels:
     app: {{ template "prometheus-operator.name" . }}-kube-etcd
 {{ include "prometheus-operator.labels" . | indent 4 }}
 spec:

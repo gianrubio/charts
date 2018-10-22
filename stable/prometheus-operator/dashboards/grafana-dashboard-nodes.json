@@ -170,7 +170,7 @@
                           "expr": "avg by (cpu) (irate(node_cpu{job=\"node-exporter\", mode!=\"idle\", instance=\"$instance\"}[5m])) * 100",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{cpu}}`}}",
+                          "legendFormat": "{{cpu}}",
                           "refId": "A"
                       }
                   ],
@@ -274,7 +274,7 @@
                           "expr": "avg (sum by (cpu) (irate(node_cpu{job=\"node-exporter\", mode!=\"idle\", instance=\"$instance\"}[2m])) ) * 100\n",
                           "format": "time_series",
                           "intervalFactor": 10,
-                          "legendFormat": "{{`{{ cpu }}`}}",
+                          "legendFormat": "{{ cpu }}",
                           "refId": "A"
                       }
                   ],
@@ -775,7 +775,7 @@
                           "expr": "node:node_filesystem_usage:\n",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{device}}`}}",
+                          "legendFormat": "{{device}}",
                           "refId": "A"
                       }
                   ],
@@ -879,7 +879,7 @@
                           "expr": "max(rate(node_network_receive_bytes{job=\"node-exporter\", instance=\"$instance\", device!\u007e\"lo\"}[5m]))",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{device}}`}}",
+                          "legendFormat": "{{device}}",
                           "refId": "A"
                       }
                   ],
@@ -970,7 +970,7 @@
                           "expr": "max(rate(node_network_transmit_bytes{job=\"node-exporter\", instance=\"$instance\", device!\u007e\"lo\"}[5m]))",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{device}}`}}",
+                          "legendFormat": "{{device}}",
                           "refId": "A"
                       }
                   ],

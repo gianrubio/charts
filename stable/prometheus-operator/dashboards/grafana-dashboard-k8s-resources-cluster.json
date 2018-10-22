@@ -574,7 +574,7 @@
                           "expr": "sum(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate) by (namespace)",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{namespace}}`}}",
+                          "legendFormat": "{{namespace}}",
                           "legendLink": null,
                           "step": 10
                       }
@@ -939,7 +939,7 @@
                           "expr": "sum(container_memory_rss{container_name!=\"\"}) by (namespace)",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{namespace}}`}}",
+                          "legendFormat": "{{namespace}}",
                           "legendLink": null,
                           "step": 10
                       }

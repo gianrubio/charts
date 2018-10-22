@@ -58,7 +58,7 @@
                           "expr": "sum(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace=\"$namespace\", pod_name=\"$pod\", container_name!=\"POD\"}) by (container_name)",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{container_name}}`}}",
+                          "legendFormat": "{{container_name}}",
                           "legendLink": null,
                           "step": 10
                       }
@@ -423,7 +423,7 @@
                           "expr": "sum(container_memory_usage_bytes{namespace=\"$namespace\", pod_name=\"$pod\", container_name!=\"POD\", container_name!=\"\"}) by (container_name)",
                           "format": "time_series",
                           "intervalFactor": 2,
-                          "legendFormat": "{{`{{container_name}}`}}",
+                          "legendFormat": "{{container_name}}",
                           "legendLink": null,
                           "step": 10
                       }

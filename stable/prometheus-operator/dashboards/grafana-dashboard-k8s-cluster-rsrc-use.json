@@ -58,7 +58,7 @@
                             "expr": "node:node_cpu_utilisation:avg1m * node:node_num_cpu:sum / scalar(sum(node:node_num_cpu:sum))",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -144,7 +144,7 @@
                             "expr": "node:node_cpu_saturation_load1: / scalar(sum(min(kube_pod_info) by (node)))",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -242,7 +242,7 @@
                             "expr": "node:node_memory_utilisation:ratio",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -328,7 +328,7 @@
                             "expr": "node:node_memory_swap_io_bytes:sum_rate",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -426,7 +426,7 @@
                             "expr": "node:node_disk_utilisation:avg_irate / scalar(:kube_pod_info_node_count:)",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -512,7 +512,7 @@
                             "expr": "node:node_disk_saturation:avg_irate / scalar(:kube_pod_info_node_count:)",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -610,7 +610,7 @@
                             "expr": "node:node_net_utilisation:sum_irate",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -696,7 +696,7 @@
                             "expr": "node:node_net_saturation:sum_irate",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
@@ -794,7 +794,7 @@
                             "expr": "sum(max(node_filesystem_size{fstype=\u007e\"ext[234]|btrfs|xfs|zfs\"} - node_filesystem_avail{fstype=\u007e\"ext[234]|btrfs|xfs|zfs\"}) by (device,pod,namespace)) by (pod,namespace)\n/ scalar(sum(max(node_filesystem_size{fstype=\u007e\"ext[234]|btrfs|xfs|zfs\"}) by (device,pod,namespace)))\n* on (namespace, pod) group_left (node) node_namespace_pod:kube_pod_info:\n",
                             "format": "time_series",
                             "intervalFactor": 2,
-                            "legendFormat": "{{`{{node}}`}}",
+                            "legendFormat": "{{node}}",
                             "legendLink": "/d/4ac4f123aae0ff6dbaf4f4f66120033b/k8s-node-rsrc-use",
                             "step": 10
                         }
