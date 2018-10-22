@@ -12,9 +12,17 @@ The components in this chart create additional resources that expand the longest
 The longest name that gets created adds and extra 37 charachters, so truncation should be 63-35=26.
 */}}
 {{- define "prometheus-operator.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 26 | trimSuffix "-" -}}
+{{- else -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 26 | trimSuffix "-" -}}
+{{- else -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 26 | trimSuffix "-" -}}
-{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 
 {{/* Fullname suffixed with operator */}}
 {{- define "prometheus-operator.operator.fullname" -}}
