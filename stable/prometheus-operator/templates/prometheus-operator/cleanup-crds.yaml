@@ -25,7 +25,7 @@ spec:
       containers:
         - name: kubectl
           image: "{{ .Values.prometheusOperator.hyperkubeImage.repository }}:{{ .Values.prometheusOperator.hyperkubeImage.tag }}"
-          imagePullPolicy: "{{ .Values.prometheusOperator.hyperkube.pullPolicy }}"
+          imagePullPolicy: "{{ .Values.prometheusOperator.hyperkubeImage.pullPolicy }}"
           command:
           - /bin/sh
           - -c
