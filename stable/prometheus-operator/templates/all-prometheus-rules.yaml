@@ -1,4 +1,4 @@
-{{- if and .Values.prometheus.defaultRules.create }}
+{{- if and .Values.defaultRules.create }}
 {{- $operatorJob := printf "%s-%s" (include "prometheus-operator.fullname" .) "operator" }}
 {{- $prometheusJob := printf "%s-%s" (include "prometheus-operator.fullname" .) "prometheus" }}
 {{- $alertmanagerJob := printf "%s-%s" (include "prometheus-operator.fullname" .) "alertmanager" }}
@@ -1138,7 +1138,7 @@ spec:
           changes within the last hour
         summary: a high number of leader changes within the etcd cluster are happening
     - alert: HighNumberOfFailedGRPCRequests
-      expr: 100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="etcd"}[5m])) BY (grpc_service, grpc_method)
+      expr: 100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="kube-etcd"}[5m])) BY (grpc_service, grpc_method)
         / sum(rate(grpc_server_handled_total{job="kube-etcd"}[5m])) BY (grpc_service, grpc_method)) > 1
       for: 10m
       labels:
@@ -1148,7 +1148,7 @@ spec:
           on etcd instance {{`{{ $labels.instance }}`}}'
         summary: a high number of gRPC requests are failing
     - alert: HighNumberOfFailedGRPCRequests
-      expr: 100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="etcd"}[5m])) BY (grpc_service, grpc_method)
+      expr: 100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="kube-etcd"}[5m])) BY (grpc_service, grpc_method)
         / sum(rate(grpc_server_handled_total{job="kube-etcd"}[5m])) BY (grpc_service, grpc_method)) > 5
       for: 5m
       labels:
@@ -1158,7 +1158,7 @@ spec:
           on etcd instance {{`{{ $labels.instance }}`}}'
         summary: a high number of gRPC requests are failing
     - alert: GRPCRequestsSlow
-      expr: histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job="etcd",grpc_type="unary"}[5m])) by (grpc_service, grpc_method, le))
+      expr: histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job="kube-etcd",grpc_type="unary"}[5m])) by (grpc_service, grpc_method, le))
         > 0.15
       for: 10m
       labels:
