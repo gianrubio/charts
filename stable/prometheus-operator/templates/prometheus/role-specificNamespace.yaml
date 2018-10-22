@@ -9,7 +9,7 @@ items:
     name: {{ template "prometheus-operator.fullname" $ }}-prometheus
     labels:
       app: {{ template "prometheus-operator.name" $ }}-prometheus
-{{ include "prometheus-operator.labels" $ | indent 4 }}
+{{ include "prometheus-operator.labels" $ | indent 6 }}
     namespace: {{ . | quote }}
   rules:
   - apiGroups:
